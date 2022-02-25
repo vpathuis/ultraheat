@@ -23,7 +23,7 @@ def read_uh50(port) -> _UH50Summary:
     with _connect_serial(port) as conn:
         model = _wake_up(conn)
 
-        # checking if we're talking to supported model 'LUGCUH50'
+        # checking if we can read the model (eg. 'LUGCUH50')
         if not(model):
             raise('No model could be read')
         
