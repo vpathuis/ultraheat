@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: uh50-api
-Version: 0.1
+Version: 0.1.1
 Summary: Reading usage data from the Landys & Gyr UH50 heat measuring unit
 Home-page: https://github.com/vpathuis/uh50
 Author: vpathuis

@@ -1,13 +1,13 @@
 # UH50 Python package
 This module reads from the Landys & Gyr UH50 heat measuring unit and returns the currect GJ and m3 meters.
-Note: An IR reader is needed and connected to the machine running the python script
+Note: An (USB) IR reader is needed and connected to the machine running the python script
 
 WARNING: everytime this is called, battery time of the UH50 will go down by about 30 minutes!
 This package has been tested with the Landys & Gyr UH50 type LUGCUH50. Other models are likely to work as well.
 
 ## Using the python integration
 
-To use the module as a script, call the module directly and follow the instructions through the command lime
+To use the module as a script, call the module directly and follow the instructions through the command line.
 To use the module as an API use code, such as:
 
 ```python
