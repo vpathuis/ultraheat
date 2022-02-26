@@ -7,4 +7,5 @@ uh50_api.egg-info/PKG-INFO
 uh50_api.egg-info/SOURCES.txt
 uh50_api.egg-info/dependency_links.txt
 uh50_api.egg-info/not-zip-safe
+uh50_api.egg-info/requires.txt
 uh50_api.egg-info/top_level.txt

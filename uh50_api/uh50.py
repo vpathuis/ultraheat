@@ -84,7 +84,7 @@ if __name__ == "__main__":
         print('full response :',result['full_response'])
     except serial.serialutil.SerialException:
         print("Couldn't connect to port", port)
-        print("Are you using sudo?", port)
+        print("Are you using sudo?")
     except:
         print('Something went wrong')
         raise
