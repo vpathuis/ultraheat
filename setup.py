@@ -12,7 +12,6 @@ setup(name='uh50_api',
       long_description_content_type='text/markdown',
       url='https://github.com/vpathuis/uh50',
       author='vpathuis',
-      author_email='py@vpathuis.dds.nl',
       license='MIT',
       packages=['uh50_api'],
       install_requires=[
