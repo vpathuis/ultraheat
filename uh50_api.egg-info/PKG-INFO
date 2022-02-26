@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: uh50-api
-Version: 0.1.4
+Version: 0.2.0
 Summary: Reading usage data from the Landys & Gyr UH50 heat measuring unit
 Home-page: https://github.com/vpathuis/uh50
 Author: vpathuis
@@ -19,15 +19,15 @@ This package has been tested with the Landys & Gyr UH50 type LUGCUH50. Other mod
 
 ## Using the python integration
 
-To use the module as a script, call the module directly and follow the instructions through the command line.
+To use the module as a script, call the module directly (uh50_api.uh50) and follow the instructions through the command line. This requires access to the serial ports and might only works as root.
 To use the module as an API use code, such as:
 
 ```python
-from uh50_api import uh50
+import uh50_api
 
-uh50.findports()  # to check available ports
+uh50_api.findports()  # to check available ports
 
-result = uh50.read_uh50('port')  # eg uh50.read_uh50('/dev/ttyUSB0') or uh50.read_uh50('COM5')
+result = uh50_api.read_uh50('port')  # eg uh50.read_uh50('/dev/ttyUSB0') or uh50.read_uh50('COM5')
 print('GJ :',result['gj'])
 print('m3 :',result['m3'])
 print('model :',result['model'])
