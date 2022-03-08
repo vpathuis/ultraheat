@@ -1,1 +1,1 @@
-from .uh50 import (find_ports, read_uh50, connect_serial)
+from .uh50 import (find_ports, read_uh50, validate)
