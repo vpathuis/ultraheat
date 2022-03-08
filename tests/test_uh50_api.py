@@ -1,12 +1,15 @@
 import unittest
-from uh50_api.uh50 import read_uh50
-from uh50_api.uh50 import _search_data
+from uh50_api.uh50 import (read_uh50, _search_data, connect_serial)
 import serial
 
 
 class UH50Test(unittest.TestCase):
 
-    def test_test(self):
+    def test_connect_fail(self):
+        with self.assertRaises(serial.serialutil.SerialException):
+            _ = connect_serial('non-existing-port')
+
+    def test_read_fail(self):
         with self.assertRaises(serial.serialutil.SerialException):
             _ = read_uh50('non-existing-port')
 

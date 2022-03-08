@@ -20,7 +20,7 @@ class _UH50Summary(TypedDict):
 
 def read_uh50(port) -> _UH50Summary:
     "Reads the UH50 on the specified port, searching for info on GJ and m3"
-    with _connect_serial(port) as conn:
+    with connect_serial(port) as conn:
         model = _wake_up(conn)
 
         # checking if we can read the model (eg. 'LUGCUH50')
@@ -42,7 +42,8 @@ def _search_data(data):
 
     raise Exception("GJ and m3 values not found")
 
-def _connect_serial(port) -> Serial:
+def connect_serial(port) -> Serial:
+    "Can be called to check connection. Not needed to call when calling read_uh50"
     return serial.Serial(port,
                         baudrate=300,
                         bytesize=serial.SEVENBITS,

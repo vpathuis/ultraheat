@@ -1,2 +1,1 @@
-from .uh50 import find_ports
-from .uh50 import read_uh50
+from .uh50 import (find_ports, read_uh50, connect_serial)
