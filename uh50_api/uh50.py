@@ -31,6 +31,10 @@ def read_uh50(port) -> _UH50Summary:
         gj, m3 = _search_data(full_response)
         return {'gj': gj, 'm3': m3, 'model': model, 'full_response': full_response}
 
+def read_dummy() -> _UH50Summary:
+    "Return dummy values for testing purposes, when no live connection is available"
+    return {'gj': '123.456', 'm3': '1234.56', 'model': 'LUGCUH50', 'full_response': ''}  
+
 def find_ports():
     "Returns the available ports"
     return serial.tools.list_ports.comports()
