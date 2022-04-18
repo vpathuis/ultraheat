@@ -12,72 +12,78 @@ import serial
 import serial.tools.list_ports
 from typing import TypedDict
 
-class _UH50Summary(TypedDict):
-    gj: str
-    m3: str
-    model: str
-    full_response: str
-
-def read_uh50(port) -> _UH50Summary:
-    "Reads the UH50 on the specified port, searching for info on GJ and m3"
-    with _connect_serial(port) as conn:
-        model = _wake_up(conn)
-
-        # checking if we can read the model (eg. 'LUGCUH50')
-        if not(model):
-            raise('No model could be read')
-        
-        full_response = _get_data(conn)
-        gj, m3 = _search_data(full_response)
-        return {'gj': gj, 'm3': m3, 'model': model, 'full_response': full_response}
-
-def read_dummy() -> _UH50Summary:
-    "Return dummy values for testing purposes, when no live connection is available"
-    return {'gj': '123.456', 'm3': '1234.56', 'model': 'LUGCUH50', 'full_response': ''}  
-
 def find_ports():
     "Returns the available ports"
     return serial.tools.list_ports.comports()
+    
+class UH50:
+    """Class for reading the UH50 on the specified port"""
+    
+    def __init__(self, port: str) -> None:
+        self.port = port
 
-def _search_data(data):
-    match = re.search( r'6.8\((.*)\*GJ\)6.26\((.*)\*m3\)9.21\(66153690\)', str(data), re.M|re.I)
-    if match: 
-        return match.group(1),match.group(2)
+    class _UH50Summary(TypedDict):
+        gj: str
+        m3: str
+        model: str
+        full_response: str
 
-    raise Exception("GJ and m3 values not found")
+    def read(self) -> _UH50Summary:
+        "Reads the UH50 on the specified port, searching for info on GJ and m3"
+        with self._connect_serial() as conn:
+            model = self._wake_up(conn)
 
-def validate(port) -> Serial:
-    try:
-        result = _connect_serial(port)
-        result.close
-    except:
-        raise
+            # checking if we can read the model (eg. 'LUGCUH50')
+            if not(model):
+                raise('No model could be read')
+            
+            full_response = self._get_data(conn)
+            gj, m3 = self._search_data(full_response)
+            return {'gj': gj, 'm3': m3, 'model': model, 'full_response': full_response}
 
-def _connect_serial(port) -> Serial:
-    "Can be called to check connection. Not needed to call when calling read_uh50"
-    return serial.Serial(port,
-                        baudrate=300,
-                        bytesize=serial.SEVENBITS,
-                        parity=serial.PARITY_EVEN,
-                        stopbits=serial.STOPBITS_TWO,
-                        timeout=1,
-                        xonxoff=0,
-                        rtscts=0
-                        )
+    def read_dummy(self) -> _UH50Summary:
+        "Return dummy values for testing purposes, when no live connection is available"
+        return {'gj': '123.456', 'm3': '1234.56', 'model': 'LUGCUH50', 'full_response': ''}  
 
-def _wake_up(conn) -> str:
-    # Waking up should be done at 300 baud
-    # Sending /?!
-    conn.write(b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x2F\x3F\x21\x0D\x0A")
-    ir_command='/?!\x0D\x0A'
-    conn.write(ir_command.encode('utf-8'))
-    conn.flush()   
-    return conn.readline().decode('utf-8')[1:9]   # Read at 300 baud, this gives us the typenr
+    def _search_data(self, data):
+        match = re.search( r'6.8\((.*)\*GJ\)6.26\((.*)\*m3\)9.21\(66153690\)', str(data), re.M|re.I)
+        if match: 
+            return match.group(1),match.group(2)
 
-def _get_data(conn):
-    #TODO make this asyc
-    conn.baudrate=2400 # Now switch to 2400 BAUD. This could be different for other models. Let me know if you experience problems.
-    return conn.readline().decode('utf-8') # Reading just one line, because that's where we know the data is.
+        raise Exception("GJ and m3 values not found")
+
+    def validate(self) -> Serial:
+        try:
+            result = self._connect_serial()
+            result.close
+        except:
+            raise
+
+    def _connect_serial(self) -> Serial:
+        "Internal function. Not needed to call when calling read_uh50"
+        return serial.Serial(self.port,
+                            baudrate=300,
+                            bytesize=serial.SEVENBITS,
+                            parity=serial.PARITY_EVEN,
+                            stopbits=serial.STOPBITS_TWO,
+                            timeout=1,
+                            xonxoff=0,
+                            rtscts=0
+                            )
+
+    def _wake_up(self, conn) -> str:
+        # Waking up should be done at 300 baud
+        # Sending /?!
+        conn.write(b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x2F\x3F\x21\x0D\x0A")
+        ir_command='/?!\x0D\x0A'
+        conn.write(ir_command.encode('utf-8'))
+        conn.flush()   
+        return conn.readline().decode('utf-8')[1:9]   # Read at 300 baud, this gives us the typenr
+
+    def _get_data(self, conn):
+        #TODO make this asyc
+        conn.baudrate=2400 # Now switch to 2400 BAUD. This could be different for other models. Let me know if you experience problems.
+        return conn.readline().decode('utf-8') # Reading just one line, because that's where we know the data is.
 
 if __name__ == "__main__":
     print('WARNING: everytime this is called, battery time of the UH50 will go down by about 30 minutes!')
@@ -89,7 +95,8 @@ if __name__ == "__main__":
 
     port = input('Type the port the the IR-reader is on: ')  # eg /dev/ttyUSB0 or COM5
     try:
-        result = read_uh50(port)
+        heat_meter = UH50(port)
+        result = heat_meter.read
         print('GJ :',result['gj'])
         print('m3 :',result['m3'])
         print('model :',result['model'])

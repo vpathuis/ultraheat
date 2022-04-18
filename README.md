@@ -15,7 +15,8 @@ import uh50_api
 
 uh50_api.findports()  # to check available ports
 
-result = uh50_api.read_uh50('port')  # eg uh50.read_uh50('/dev/ttyUSB0') or uh50.read_uh50('COM5')
+heat_meter = UH50(port) # eg UH50('/dev/ttyUSB0') or UH50('COM5')
+result = heat_meter.read() 
 print('GJ :',result['gj'])
 print('m3 :',result['m3'])
 print('model :',result['model'])
