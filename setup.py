@@ -6,7 +6,7 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
 setup(name='uh50_api',
-      version='0.2.1',
+      version='0.2.2',
       description='Reading usage data from the Landys & Gyr UH50 heat measuring unit',
       long_description=long_description,
       long_description_content_type='text/markdown',
