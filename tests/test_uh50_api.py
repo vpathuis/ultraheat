@@ -7,10 +7,10 @@ class UH50Test(unittest.TestCase):
 
     def test_read_dummy(self):
         heat_meter = UH50('test')
-        result = heat_meter.read_dummy()      
-        self.assertEqual('123.456', result['gj'])
-        self.assertEqual('1234.56', result['m3'])
-        self.assertEqual('LUGCUH50', result['model'])
+        heat_meter.update_dummy()      
+        self.assertEqual('123.456', heat_meter.gj)
+        self.assertEqual('1234.56', heat_meter.m3)
+        self.assertEqual('LUGCUH50', heat_meter.model)
 
     def test_validate_fail(self):
         heat_meter = UH50('non-existing-port')
@@ -25,7 +25,7 @@ class UH50Test(unittest.TestCase):
     def test_read_fail(self):
         heat_meter = UH50('non-existing-port')
         with self.assertRaises(serial.serialutil.SerialException):
-            _ = heat_meter.read()
+            _ = heat_meter.update()
 
     def test_search_data_list(self):
         heat_meter = UH50('dummy')

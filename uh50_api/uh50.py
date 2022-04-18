@@ -6,6 +6,7 @@ Usage: read_uh50(port), eg read_uh50('/dev/ttyUSB0') or read_uh50('COM5')
 
 Calling the module directly will allow for usage through command lime
 """
+from pyexpat import model
 import re
 from serial import Serial
 import serial
@@ -18,9 +19,15 @@ def find_ports():
     
 class UH50:
     """Class for reading the UH50 on the specified port"""
-    
+    #TODO toevoegen van variabelen en read vervangen door update en die zet dan de waarden in de variabelen 
+
     def __init__(self, port: str) -> None:
         self.port = port
+
+    _gj = ''
+    _m3 = ''
+    _model = ''
+    _full_response = ''
 
     class _UH50Summary(TypedDict):
         gj: str
@@ -28,22 +35,43 @@ class UH50:
         model: str
         full_response: str
 
-    def read(self) -> _UH50Summary:
+    @property
+    def gj(self) -> str:
+        """Get the current GJ measurement of the connected device."""
+        return self._gj
+
+    @property
+    def m3(self) -> str:
+        """Get the current m3 measurement of the connected device."""
+        return self._m3
+
+    @property
+    def model(self) -> str:
+        """Get the model of the connected device."""
+        return self._model
+
+    @property
+    def full_response(self) -> str:
+        """Get the full response of the connected device."""
+        return self._full_response
+
+    def update(self) -> None:
         "Reads the UH50 on the specified port, searching for info on GJ and m3"
         with self._connect_serial() as conn:
-            model = self._wake_up(conn)
+            self._model = self._wake_up(conn)
 
             # checking if we can read the model (eg. 'LUGCUH50')
-            if not(model):
+            if not(self._model):
                 raise('No model could be read')
             
-            full_response = self._get_data(conn)
-            gj, m3 = self._search_data(full_response)
-            return {'gj': gj, 'm3': m3, 'model': model, 'full_response': full_response}
+            self._full_response = self._get_data(conn)
+            self._gj, self._m3 = self._search_data(self._full_response)
 
-    def read_dummy(self) -> _UH50Summary:
-        "Return dummy values for testing purposes, when no live connection is available"
-        return {'gj': '123.456', 'm3': '1234.56', 'model': 'LUGCUH50', 'full_response': ''}  
+    def update_dummy(self) -> None:
+        "Sets dummy values for testing purposes, when no live connection is available"
+        self._gj = '123.456' 
+        self._m3 = '1234.56'
+        self._model = 'LUGCUH50' 
 
     def _search_data(self, data):
         match = re.search( r'6.8\((.*)\*GJ\)6.26\((.*)\*m3\)9.21\(66153690\)', str(data), re.M|re.I)
@@ -96,11 +124,12 @@ if __name__ == "__main__":
     port = input('Type the port the the IR-reader is on: ')  # eg /dev/ttyUSB0 or COM5
     try:
         heat_meter = UH50(port)
+        heat_meter.update()
         result = heat_meter.read
-        print('GJ :',result['gj'])
-        print('m3 :',result['m3'])
-        print('model :',result['model'])
-        print('full response :',result['full_response'])
+        print('GJ :',heat_meter.gj)
+        print('m3 :',heat_meter.m3)
+        print('model :',heat_meter.model)
+        print('full response :',heat_meter.full_response)
     except serial.serialutil.SerialException:
         print("Couldn't connect to port", port)
         print("Are you using sudo?")
