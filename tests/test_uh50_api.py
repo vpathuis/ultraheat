@@ -5,7 +5,7 @@ import serial
 
 class UH50Test(unittest.TestCase):
 
-    def test_read_dummy(self):
+    def test_update_dummy(self):
         heat_meter = UH50('test')
         heat_meter.update_dummy()      
         self.assertEqual('123.456', heat_meter.gj)
@@ -22,7 +22,7 @@ class UH50Test(unittest.TestCase):
         with self.assertRaises(serial.serialutil.SerialException):
             _ = heat_meter._connect_serial()
 
-    def test_read_fail(self):
+    def test_update_fail(self):
         heat_meter = UH50('non-existing-port')
         with self.assertRaises(serial.serialutil.SerialException):
             _ = heat_meter.update()
