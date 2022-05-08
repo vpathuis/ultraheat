@@ -8,8 +8,8 @@ class UH50Test(unittest.TestCase):
     def test_update_dummy(self):
         heat_meter = UH50('test')
         heat_meter.update_dummy()      
-        self.assertEqual('123.456', heat_meter.gj)
-        self.assertEqual('1234.56', heat_meter.m3)
+        self.assertRegex(heat_meter.gj, r'^999.\d{3}$')
+        self.assertRegex(heat_meter.m3, r'^9999.\d{2}$')
         self.assertEqual('LUGCUH50', heat_meter.model)
 
     def test_validate_fail(self):

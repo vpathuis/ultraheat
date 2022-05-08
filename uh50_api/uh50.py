@@ -12,6 +12,7 @@ from serial import Serial
 import serial
 import serial.tools.list_ports
 from typing import TypedDict
+from random import randrange
 
 def find_ports():
     "Returns the available ports"
@@ -69,8 +70,8 @@ class UH50:
 
     def update_dummy(self) -> None:
         "Sets dummy values for testing purposes, when no live connection is available"
-        self._gj = '123.456' 
-        self._m3 = '1234.56'
+        self._gj = '999.'+str(randrange(100,999)) 
+        self._m3 = '9999.'+str(randrange(10,99))
         self._model = 'LUGCUH50' 
 
     def _search_data(self, data):
