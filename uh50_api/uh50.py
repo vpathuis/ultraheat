@@ -63,7 +63,7 @@ class UH50:
 
             # checking if we can read the model (eg. 'LUGCUH50')
             if not(self._model):
-                raise('No model could be read')
+                raise Exception('No model could be read')
             
             self._full_response = self._get_data(conn)
             self._gj, self._m3 = self._search_data(self._full_response)
@@ -89,7 +89,7 @@ class UH50:
             raise
 
     def _connect_serial(self) -> Serial:
-        "Internal function. Not needed to call when calling read_uh50"
+        "Make the connection to the serial device"
         return serial.Serial(self.port,
                             baudrate=300,
                             bytesize=serial.SEVENBITS,
@@ -101,12 +101,13 @@ class UH50:
                             )
 
     def _wake_up(self, conn) -> str:
+        "Waking up the device and get the model number"
         # Waking up should be done at 300 baud
         # Sending /?!
         conn.write(b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x2F\x3F\x21\x0D\x0A")
         ir_command='/?!\x0D\x0A'
         conn.write(ir_command.encode('utf-8'))
-        conn.flush()   
+        conn.flush()
         return conn.readline().decode('utf-8')[1:9]   # Read at 300 baud, this gives us the typenr
 
     def _get_data(self, conn):

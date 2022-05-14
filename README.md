@@ -13,9 +13,14 @@ To use the module as an API:
 ```python
 import uh50_api
 
-uh50_api.findports()  # to check available ports
+# check available ports
+ports = uh50_api.find_ports() 
+for p in ports:
+    print(p.device)
+print(len(ports), 'ports found')
 
-heat_meter = UH50(port) # eg UH50('/dev/ttyUSB0') or UH50('COM5')
+# read the device
+heat_meter = uh50_api.UH50(port) # eg UH50('/dev/ttyUSB0') or UH50('COM5')
 heat_meter.update() 
 print('GJ :',heat_meter.gj)
 print('m3 :',heat_meter.m3)
