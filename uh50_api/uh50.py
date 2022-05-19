@@ -20,7 +20,6 @@ def find_ports():
     
 class UH50:
     """Class for reading the UH50 on the specified port"""
-    #TODO toevoegen van variabelen en read vervangen door update en die zet dan de waarden in de variabelen 
 
     def __init__(self, port: str) -> None:
         self.port = port
@@ -112,7 +111,15 @@ class UH50:
 
     def _get_data(self, conn):
         conn.baudrate=2400 # Now switch to 2400 BAUD. This could be different for other models. Let me know if you experience problems.
-        return conn.readline().decode('utf-8') # Reading just one line, because that's where we know the data is.
+        ir_lines = ""
+        ir_line = ""
+        iteration = 0
+        while ir_line != b'' and iteration < 100:
+            iteration += 1
+            ir_line = conn.readline()
+            ir_lines+=ir_line.decode('utf-8')
+
+        return ir_lines
 
 if __name__ == "__main__":
     print('WARNING: everytime this is called, battery time of the UH50 will go down by about 30 minutes!')
