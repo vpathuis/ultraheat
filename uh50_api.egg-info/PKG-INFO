@@ -1,12 +1,10 @@
 Metadata-Version: 2.1
 Name: uh50-api
-Version: 0.2.0
+Version: 0.2.7
 Summary: Reading usage data from the Landys & Gyr UH50 heat measuring unit
 Home-page: https://github.com/vpathuis/uh50
 Author: vpathuis
-Author-email: py@vpathuis.dds.nl
 License: MIT
-Platform: UNKNOWN
 Description-Content-Type: text/markdown
 License-File: LICENCE
 
@@ -25,13 +23,18 @@ To use the module as an API:
 ```python
 import uh50_api
 
-uh50_api.findports()  # to check available ports
+# check available ports
+ports = uh50_api.find_ports() 
+for p in ports:
+    print(p.device)
+print(len(ports), 'ports found')
 
-result = uh50_api.read_uh50('port')  # eg uh50.read_uh50('/dev/ttyUSB0') or uh50.read_uh50('COM5')
-print('GJ :',result['gj'])
-print('m3 :',result['m3'])
-print('model :',result['model'])
-print('full response :',result['full_response'])
+# read the device
+heat_meter = uh50_api.UH50(port) # eg UH50('/dev/ttyUSB0') or UH50('COM5')
+heat_meter.update() 
+print('GJ :',heat_meter.gj)
+print('m3 :',heat_meter.m3)
+print('model :',heat_meter.model)
+print('full response :',heat_meter.full_response)
 
 ```
-

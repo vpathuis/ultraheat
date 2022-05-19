@@ -111,7 +111,6 @@ class UH50:
         return conn.readline().decode('utf-8')[1:9]   # Read at 300 baud, this gives us the typenr
 
     def _get_data(self, conn):
-        #TODO make this asyc
         conn.baudrate=2400 # Now switch to 2400 BAUD. This could be different for other models. Let me know if you experience problems.
         return conn.readline().decode('utf-8') # Reading just one line, because that's where we know the data is.
 
