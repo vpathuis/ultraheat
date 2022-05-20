@@ -6,62 +6,61 @@ Usage: read_uh50(port), eg read_uh50('/dev/ttyUSB0') or read_uh50('COM5')
 
 Calling the module directly will allow for usage through command lime
 """
+from datetime import datetime
 from pyexpat import model
 import re
 from serial import Serial
 import serial
 import serial.tools.list_ports
-from typing import TypedDict
 from random import randrange
+from pprint import pprint
+
+# defines the search expressions used when parsing the response from the heat meter
+UH50_REGEX_CONFIG = {
+    'heat_usage_gj': r'6.8\((.*?)\*GJ\)',
+    'volume_usage_m3': r'6.26\((.*?)\*m3\)',
+    'ownership_number': r'9.21\((.*?)\)',
+    'volume_previous_year_m3': r'6.26\*01\((.*?)\*m3\)',
+    'heat_previous_year_gj': r'6.8\*01\((.*?)\*GJ\)',
+    'error_number': r'F\((.*?)\)',
+    'device_number': r'9.20\((.*?)\)',
+    'measurement_period_minutes': r'6.35\((.*?)\*m\)',
+    'power_max_kw': r'6.6\((.*?)\*kW\)',
+    'power_max_previous_year_kw': r'6.6\*01\((.*?)\*kW\)',
+    'flowrate_max_m3ph': r'6.33\((.*?)\*m3ph\)',
+    'flowrate_max_previous_year_m3ph': r'6.33\*01\((.*?)\*m3ph\)',
+    'flow_temperature_max_c': r'9.4\((.*?)\*C',
+    'return_temperature_max_c': r'9.4\(.*?\*C&(.*?)\*C',
+    'flow_temperature_max_previous_year_c': r'9.4\*01\((.*?)\*C',
+    'return_temperature_max_previous_year_c': r'9.4\*01\(.*?\*C&(.*?)\*C',
+    'operating_hours': r'6.31\((.*?)\*h\)',
+    'fault_hours': r'6.32\((.*?)\*h\)',
+    'fault_hours_previous_year': r'6.32\*01\((.*?)\*h\)',
+    'yearly_set_day': r'6.36\((.*?)\)',
+    'monthly_set_day': r'6.36\*02\((.*?)\)',
+    'meter_date_time': r'9.36\((.*?)\)',
+    'measuring_range_m3ph': r'9.24\((.*?)\*m3ph\)',
+    'settings_and_firmware': r'9.1\((.*?)\)',
+    'flow_hours': r'9.31\((.*?)\*h\)',
+}
 
 def find_ports():
     "Returns the available ports"
     return serial.tools.list_ports.comports()
-    
+
 class UH50:
     """Class for reading the UH50 on the specified port"""
 
     def __init__(self, port: str) -> None:
         self.port = port
 
-    _gj = ''
-    _m3 = ''
-    _model = ''
-    _full_response = ''
-
-    class _UH50Summary(TypedDict):
-        gj: str
-        m3: str
-        model: str
-        full_response: str
-
-    @property
-    def gj(self) -> str:
-        """Get the current GJ measurement of the connected device."""
-        return self._gj
-
-    @property
-    def m3(self) -> str:
-        """Get the current m3 measurement of the connected device."""
-        return self._m3
-
-    @property
-    def model(self) -> str:
-        """Get the model of the connected device."""
-        return self._model
-
-    @property
-    def full_response(self) -> str:
-        """Get the full response of the connected device."""
-        return self._full_response
-
     def update(self) -> None:
         "Reads the UH50 on the specified port, searching for info on GJ and m3"
         with self._connect_serial() as conn:
-            self._model = self._wake_up(conn)
+            self.model = self._wake_up(conn)
 
             # checking if we can read the model (eg. 'LUGCUH50')
-            if not(self._model):
+            if not(self.model):
                 raise Exception('No model could be read')
             
             self._full_response = self._get_data(conn)
@@ -69,10 +68,197 @@ class UH50:
 
     def update_dummy(self) -> None:
         "Sets dummy values for testing purposes, when no live connection is available"
-        self._gj = '999.'+str(randrange(100,999)) 
-        self._m3 = '9999.'+str(randrange(10,99))
-        self._model = 'LUGCUH50' 
+        self.heat_usage_gj = '999.'+str(randrange(100,999)) 
+        self.volume_usage_m3 = '9999.'+str(randrange(10,99))
+        self.model = 'LUGCUH50' 
 
+    def _search_response(self, data):
+        """Search the response from the heat meter for values that we can use"""
+
+        # heat_usage_gj
+        match = re.search(UH50_REGEX_CONFIG['heat_usage_gj'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.heat_usage_gj = float(match.group(1))
+            except:
+                self.heat_usage_gj = match.group(1)
+
+        # volume_usage_m3
+        match = re.search(UH50_REGEX_CONFIG['volume_usage_m3'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.volume_usage_m3 = float(match.group(1))
+            except:
+                self.volume_usage_m3 = match.group(1)
+        
+        # ownership_number
+        match = re.search(UH50_REGEX_CONFIG['ownership_number'], str(data), re.M|re.I)
+        if match:
+            self.ownership_number = match.group(1)
+        
+        # volume_previous_year_m3
+        match = re.search(UH50_REGEX_CONFIG['volume_previous_year_m3'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.volume_previous_year_m3 = float(match.group(1))
+            except:
+                self.volume_previous_year_m3 = match.group(1)
+
+        # heat_previous_year_gj
+        match = re.search(UH50_REGEX_CONFIG['heat_previous_year_gj'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.heat_previous_year_gj = float(match.group(1))
+            except:
+                self.heat_previous_year_gj = match.group(1)
+        
+        # error_number
+        match = re.search(UH50_REGEX_CONFIG['error_number'], str(data), re.M|re.I)
+        if match:
+            self.error_number = match.group(1)
+
+        # device_number
+        match = re.search(UH50_REGEX_CONFIG['device_number'], str(data), re.M|re.I)
+        if match:
+            self.device_number = match.group(1)
+
+        # measurement_period_minutes
+        match = re.search(UH50_REGEX_CONFIG['measurement_period_minutes'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.measurement_period_minutes = int(match.group(1))
+            except:
+                self.measurement_period_minutes = match.group(1)
+
+        # power_max_kw
+        match = re.search(UH50_REGEX_CONFIG['power_max_kw'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.power_max_kw = float(match.group(1))
+            except:
+                self.power_max_kw = match.group(1)
+
+        # power_max_previous_year_kw
+        match = re.search(UH50_REGEX_CONFIG['power_max_previous_year_kw'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.power_max_previous_year_kw = float(match.group(1))
+            except:
+                self.power_max_previous_year_kw = match.group(1)
+
+        # flowrate_max_m3ph
+        match = re.search(UH50_REGEX_CONFIG['flowrate_max_m3ph'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.flowrate_max_m3ph = float(match.group(1))
+            except:
+                self.flowrate_max_m3ph = match.group(1)
+        
+        # flow_temperature_max_c
+        match = re.search(UH50_REGEX_CONFIG['flow_temperature_max_c'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.flow_temperature_max_c = float(match.group(1))
+            except:
+                self.flow_temperature_max_c = match.group(1)
+
+        # flowrate_max_previous_year_m3ph
+        match = re.search(UH50_REGEX_CONFIG['flowrate_max_previous_year_m3ph'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.flowrate_max_previous_year_m3ph = float(match.group(1))
+            except:
+                self.flowrate_max_previous_year_m3ph = match.group(1)
+                
+        # return_temperature_max_c
+        match = re.search(UH50_REGEX_CONFIG['return_temperature_max_c'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.return_temperature_max_c = float(match.group(1))
+            except:
+                self.return_temperature_max_c = match.group(1)
+
+        # flow_temperature_max_previous_year_c
+        match = re.search(UH50_REGEX_CONFIG['flow_temperature_max_previous_year_c'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.flow_temperature_max_previous_year_c = float(match.group(1))
+            except:
+                self.flow_temperature_max_previous_year_c = match.group(1)
+
+        # return_temperature_max_previous_year_c
+        match = re.search(UH50_REGEX_CONFIG['return_temperature_max_previous_year_c'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.return_temperature_max_previous_year_c = float(match.group(1))
+            except: 
+                self.return_temperature_max_previous_year_c = match.group(1)
+        
+        # operating_hours
+        match = re.search(UH50_REGEX_CONFIG['operating_hours'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.operating_hours = int(match.group(1))
+            except:
+                self.operating_hours = match.group(1)
+        
+        # fault_hours
+        match = re.search(UH50_REGEX_CONFIG['fault_hours'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.fault_hours = int(match.group(1))
+            except:
+                self.fault_hours = match.group(1)
+
+        # fault_hours_previous_year
+        match = re.search(UH50_REGEX_CONFIG['fault_hours_previous_year'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.fault_hours_previous_year = int(match.group(1))
+            except:
+                self.fault_hours_previous_year = match.group(1)
+
+        # yearly_set_day
+        match = re.search(UH50_REGEX_CONFIG['yearly_set_day'], str(data), re.M|re.I)
+        if match:
+            self.yearly_set_day = match.group(1)
+
+        # monthly_set_day
+        match = re.search(UH50_REGEX_CONFIG['monthly_set_day'], str(data), re.M|re.I)
+        if match:
+            self.monthly_set_day = match.group(1)
+
+        # meter_date_time
+        match = re.search(UH50_REGEX_CONFIG['meter_date_time'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.meter_date_time = datetime.strptime(match.group(1),'%Y-%m-%d&%H:%M:%S')
+            except:
+                self.meter_date_time = match.group(1)
+
+        # measuring_range_m3ph
+        match = re.search(UH50_REGEX_CONFIG['measuring_range_m3ph'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.measuring_range_m3ph = float(match.group(1))
+            except:
+                self.measuring_range_m3ph = match.group(1)
+
+        # settings_and_firmware
+        match = re.search(UH50_REGEX_CONFIG['settings_and_firmware'], str(data), re.M|re.I)
+        if match:
+            self.settings_and_firmware = match.group(1)
+
+        # flow_hours
+        match = re.search(UH50_REGEX_CONFIG['flow_hours'], str(data), re.M|re.I)
+        if match:
+            try:
+                self.flow_hours = int(match.group(1))
+            except:
+                self.flow_hours = match.group(1)
+
+        return
+    
     def _search_data(self, data):
         match = re.search( r'6.8\((.*)\*GJ\)6.26\((.*)\*m3\)9.21\(66153690\)', str(data), re.M|re.I)
         if match: 
@@ -133,11 +319,7 @@ if __name__ == "__main__":
     try:
         heat_meter = UH50(port)
         heat_meter.update()
-        result = heat_meter.read
-        print('GJ :',heat_meter.gj)
-        print('m3 :',heat_meter.m3)
-        print('model :',heat_meter.model)
-        print('full response :',heat_meter.full_response)
+        pprint(vars(heat_meter))
     except serial.serialutil.SerialException:
         print("Couldn't connect to port", port)
         print("Are you using sudo?")
