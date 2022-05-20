@@ -258,14 +258,7 @@ class UH50:
                 self.flow_hours = match.group(1)
 
         return
-    
-    def _search_data(self, data):
-        match = re.search( r'6.8\((.*)\*GJ\)6.26\((.*)\*m3\)9.21\(66153690\)', str(data), re.M|re.I)
-        if match: 
-            return match.group(1),match.group(2)
-
-        raise Exception("GJ and m3 values not found")
-
+ 
     def validate(self) -> Serial:
         try:
             result = self._connect_serial()
