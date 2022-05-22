@@ -290,7 +290,7 @@ class UH50:
         ir_lines = ""
         ir_line = ""
         iteration = 0
-        while ir_line != b'' and iteration < 100:
+        while ir_line != b'' and iteration < 26:  # reading all lines (typically 25 lines) 
             iteration += 1
             ir_line = conn.readline()
             ir_lines+=ir_line.decode('utf-8')

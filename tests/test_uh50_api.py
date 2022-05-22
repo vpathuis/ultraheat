@@ -60,12 +60,12 @@ class UH50Test(unittest.TestCase):
         self.assertEqual('0&1&0&0000&CECV&CECV&1&5.16&5.16&F&101008&040404&08&0', heat_meter.settings_and_firmware)
         self.assertEqual(28849, heat_meter.flow_hours)
 
-    def test_read_data_not_found(self):
-        heat_meter = UH50('dummy')
-        with self.assertRaises(Exception) as cm:
-            _ = heat_meter._search_data(['6.8(0255.987*XX)6.26(02458.16*YY)9.21(66153690)', \
-                                '6.26*01(02196.39*m3)6.8*01(0233.431*GJ)', \
-                                'F(0)9.20(66153690)6.35(60*m)', \
-                                '6.6(0022.4*kW)6.6*01(0022.4*kW)6.33(000.708*m3ph)9.4(098.5*C&096.1*C)',])
-        self.assertEqual('GJ and m3 values not found', str(cm.exception))
+    # def test_read_data_not_found(self):
+    #     heat_meter = UH50('dummy')
+    #     with self.assertRaises(Exception) as cm:
+    #         _ = heat_meter._search_data(['6.8(0255.987*XX)6.26(02458.16*YY)9.21(66153690)', \
+    #                             '6.26*01(02196.39*m3)6.8*01(0233.431*GJ)', \
+    #                             'F(0)9.20(66153690)6.35(60*m)', \
+    #                             '6.6(0022.4*kW)6.6*01(0022.4*kW)6.33(000.708*m3ph)9.4(098.5*C&096.1*C)',])
+    #     self.assertEqual('GJ and m3 values not found', str(cm.exception))
 
