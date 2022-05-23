@@ -54,7 +54,8 @@ class HeatMeterResponse:
 
     def _match(self, name):
         str_match = re.search(
-            UH50_REGEX_CONFIG[name]['regex'], str(self.raw_response), re.M | re.I
+            UH50_REGEX_CONFIG[name]['regex'], str(
+                self.raw_response), re.M | re.I
         )
         if str_match:
             try:

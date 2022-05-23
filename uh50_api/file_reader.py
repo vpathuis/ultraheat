@@ -6,4 +6,3 @@ class FileReader():
     def read(self):
         with open(self._file_name, "r") as f:
             return(f.read())
-
