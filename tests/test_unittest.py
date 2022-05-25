@@ -1,32 +1,23 @@
 from datetime import datetime
+import os
 import unittest
 from uh50_api import *
-import serial
+
+
+DUMMY_FILE = 'LUGCUH50_dummy.txt'
+DUMMY_FILE_ERROR = 'LUGCUH50_dummy_error.txt'
+path = os.path.abspath(os.path.dirname(__file__))
+dummy_file_path = os.path.join(path,DUMMY_FILE)
+dummy_file_path_error = os.path.join(path,DUMMY_FILE_ERROR)
 
 
 class UH50Test(unittest.TestCase):
 
-    # def test_update_dummy(self):
-    #     heat_meter = HeatMeterService('test')
-    #     heat_meter.update_dummy()
-    #     self.assertRegex(heat_meter.heat_usage_gj, r'^999.\d{3}$')
-    #     self.assertRegex(heat_meter.volume_usage_m3, r'^9999.\d{2}$')
-    #     self.assertEqual('LUGCUH50', heat_meter.model)
+    def test_validate(self):
+        reader = FileReader(dummy_file_path)
 
-    # def test_validate_fail(self):
-    #     heat_meter = HeatMeterService('non-existing-port')
-    #     with self.assertRaises(serial.serialutil.SerialException):
-    #         _ = heat_meter.validate()
-
-    # def test_connect_fail(self):
-    #     heat_meter = HeatMeterService('non-existing-port')
-    #     with self.assertRaises(serial.serialutil.SerialException):
-    #         _ = heat_meter._connect_serial()
-
-    # def test_update_fail(self):
-    #     heat_meter = HeatMeterService('non-existing-port')
-    #     with self.assertRaises(serial.serialutil.SerialException):
-    #         _ = heat_meter.update()
+        heat_meter_service = HeatMeterService(reader)
+        self.assertEqual('LUGCUH50', heat_meter_service.validate())
 
     def test_heat_meter_read_file(self):
         file_name = 'tests/LUGCUH50_dummy.txt'
@@ -71,14 +62,3 @@ class UH50Test(unittest.TestCase):
         reponse_data = HeatMeterResponse(heat_meter_service.read())
         with self.assertRaises(ValueError):
             _ = reponse_data.heat_usage_gj
-
-
-
-    # def test_read_data_not_found(self):
-    #     heat_meter = HeatMeterService('dummy')
-    #     with self.assertRaises(Exception) as cm:
-    #         _ = heat_meter._search_data(['6.8(0255.987*XX)6.26(02458.16*YY)9.21(66153690)', \
-    #                             '6.26*01(02196.39*m3)6.8*01(0233.431*GJ)', \
-    #                             'F(0)9.20(66153690)6.35(60*m)', \
-    #                             '6.6(0022.4*kW)6.6*01(0022.4*kW)6.33(000.708*m3ph)9.4(098.5*C&096.1*C)',])
-    #     self.assertEqual('GJ and m3 values not found', str(cm.exception))

@@ -10,11 +10,11 @@ class FileReader():
     def validate(self) -> str:
         """ Reads the first line of the file, which should contain the model name """
         with open(self._file_name, "r") as f:
-            self.model = f.readline()
+            self.model = f.readline().strip('\n')
             return self.model
 
     def read(self) -> str:
         with open(self._file_name, "r") as f:
-            self.model = f.readline()
+            self.model = f.readline().strip('\n')
             return(f.read())
 
