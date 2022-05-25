@@ -52,6 +52,7 @@ UH50_REGEX_CONFIG = {
 
 @dataclass
 class HeatMeterResponse:
+    model: str
     raw_response: str
 
     # def __post_init__(self):
