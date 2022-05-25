@@ -5,11 +5,11 @@ Note: An (USB) IR reader is needed and connected to the machine running the pyth
 WARNING: everytime this is called, battery time of the UH50 will go down by about 30 minutes!
 This package has been tested with the Landys & Gyr UH50 type LUGCUH50. Other models are likely to work as well.
 
-## Using the python integration
+## Using the python integration from CLI
+To use the module as a script, call the module directly with an -h flag, which will explain how to use it.
+Reading the serial port requires access to the serial ports and might only works as root.
 
-To use the module as a script, call the module directly (uh50_api.uh50) and follow the instructions through the command line. This requires access to the serial ports and might only works as root.
-
-To use the module as an API:
+## Using the python integration as API
 ```python
 import uh50_api
 
@@ -19,13 +19,20 @@ for p in ports:
     print(p.device)
 print(len(ports), 'ports found')
 
-# read the device
-heat_meter = uh50_api.UH50(port) # eg UH50('/dev/ttyUSB0') or UH50('COM5')
-heat_meter.update() 
+# read the device from file for integration testing purposes
+path = os.path.abspath(os.path.dirname(__file__))
+file_name = os.path.join(path, "tests", "LUGCUH50_dummy.txt")
+heat_meter_service = HeatMeterService(FileReader(file_name))
+response_data = heat_meter_service.read()
+
+# read the UH50 device
+heat_meter_service = HeatMeterService(UH50Reader(args.port))
+response_data = heat_meter_service.read()
+
+print('model :',heat_meter.model)
 print('GJ :',heat_meter.heat_usage_gj)
 print('m3 :',heat_meter.volume_usage_m3)
-print('model :',heat_meter.model)
-
+etc..
 
 ```
 ## Full list of available data

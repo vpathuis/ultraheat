@@ -1,3 +1,8 @@
 /__pycache__
+/uh50_api/__pycache__
+/tests/__pycache__
 /venv
 /dist
+.coverage
+tests/example_report.txt
+/uh50_api.egg-info
