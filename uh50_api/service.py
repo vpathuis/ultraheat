@@ -4,9 +4,9 @@ Reads raw Heat Meter data and returns a HeatMeterResponse object
 from uh50_api.response import HeatMeterResponse
 
 
-class HeatMeterService():
+class HeatMeterService:
     """
-    Reads the heat meter and returns its value.     
+    Reads the heat meter and returns its value.
     """
 
     def __init__(self, reader) -> None:
