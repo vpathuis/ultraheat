@@ -29,7 +29,7 @@ class UH50Test(unittest.TestCase):
     #         _ = heat_meter.update()
 
     def test_heat_meter_read_file(self):
-        file_name = 'tests/dummy_response.txt'
+        file_name = 'tests/LUGCUH50_dummy.txt'
         heat_meter_service: HeatMeterService = HeatMeterService(
             FileReader(file_name))
         response_data = HeatMeterResponse(heat_meter_service.read())
@@ -65,7 +65,7 @@ class UH50Test(unittest.TestCase):
 
 
     def test_heat_meter_read_file_conversion_error(self):
-        file_name = 'tests/dummy_response_error.txt'
+        file_name = 'tests/LUGCUH50_dummy_error.txt'
         heat_meter_service: HeatMeterService = HeatMeterService(
             FileReader(file_name))
         reponse_data = HeatMeterResponse(heat_meter_service.read())

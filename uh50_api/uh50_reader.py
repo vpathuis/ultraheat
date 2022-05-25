@@ -1,3 +1,7 @@
+""" 
+Reads raw UH50 response data from the UH50 unit. 
+To test the connection use validate, which will return the model name.
+"""
 import serial
 from serial import Serial
 
