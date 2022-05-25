@@ -5,7 +5,6 @@ from uh50_api.find_ports import find_ports
 from uh50_api.service import HeatMeterService
 from uh50_api.file_reader import FileReader
 from uh50_api.uh50_reader import UH50Reader
-import serial.tools.list_ports
 
 
 if __name__ == "__main__":
