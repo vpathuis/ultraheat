@@ -55,9 +55,6 @@ class HeatMeterResponse:
     model: str
     raw_response: str
 
-    # def __post_init__(self):
-    #     self._search_response(self.raw_response)
-
     def _match(self, name):
         str_match = re.search(
             UH50_REGEX_CONFIG[name]["regex"], str(self.raw_response), re.M | re.I

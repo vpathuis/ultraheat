@@ -7,7 +7,6 @@ This is for (integration) testing purposes, so you won't need to drain the batte
 class FileReader:
     def __init__(self, file_name) -> None:
         self._file_name = file_name
-        self.model: str
 
     def validate(self) -> str:
         """Reads the first line of the file, which should contain the model name"""

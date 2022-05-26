@@ -6,9 +6,7 @@ from uh50_api.service import HeatMeterService
 from uh50_api.file_reader import FileReader
 from uh50_api.uh50_reader import UH50Reader
 
-
-if __name__ == "__main__":
-
+def parse_arguments():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -25,8 +23,12 @@ if __name__ == "__main__":
         action="store_true",
     )
 
-    args = parser.parse_args()
+    return parser.parse_args()
 
+
+if __name__ == "__main__":
+
+    args = parse_arguments()
     if args.ports:
         print("showing available ports: ")
         ports = find_ports()
@@ -35,7 +37,7 @@ if __name__ == "__main__":
         print(len(ports), "ports found")
         exit()
 
-    elif args.file:
+    if args.file:
         if args.file == "default":
             print("Using default dummy file")
             path = os.path.abspath(os.path.dirname(__file__))
