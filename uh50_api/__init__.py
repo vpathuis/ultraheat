@@ -9,6 +9,7 @@ This is mainly for integration testing purposes, so you won't need to drain the 
 """
 
 from .find_ports import find_ports
+from .uh50_reader import UH50Reader
 from .file_reader import FileReader
 from .service import HeatMeterService
 from .response import HeatMeterResponse
