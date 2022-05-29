@@ -63,7 +63,6 @@ if args.validate:
 else:
     response_data = heat_meter_service.read()
 
-    print("model: " + response_data.model)
     print("heat_usage_gj: " + str(response_data.heat_usage_gj))
     print("volume_usage_m3: " + str(response_data.volume_usage_m3))
     print("ownership_number: " + str(response_data.ownership_number))

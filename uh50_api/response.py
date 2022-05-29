@@ -52,7 +52,6 @@ UH50_REGEX_CONFIG = {
 
 @dataclass
 class HeatMeterResponse:
-    model: str
     raw_response: str
 
     def _match(self, name):

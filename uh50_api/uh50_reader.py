@@ -9,7 +9,6 @@ from serial import Serial
 class UH50Reader:
     def __init__(self, port) -> None:
         self._port = port
-        self.model: str
 
     def validate(self) -> str:
         "Open connection to the UH50 and get the model name, thereby validating the connection"
@@ -48,8 +47,8 @@ class UH50Reader:
         # Read at 300 baud, this gives us the typenr
 
         # checking if we can read the model (eg. 'LUGCUH50')
-        self.model = conn.readline().decode("utf-8")[1:9]
-        if not (self.model):
+        model = conn.readline().decode("utf-8")[1:9]
+        if not (model):
             raise Exception("No model could be read")
         return
 
