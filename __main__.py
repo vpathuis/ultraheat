@@ -6,9 +6,9 @@ from uh50_api.service import HeatMeterService
 from uh50_api.file_reader import FileReader
 from uh50_api.uh50_reader import UH50Reader
 
+parser = argparse.ArgumentParser()
 
 def parse_arguments():
-    parser = argparse.ArgumentParser()
 
     parser.add_argument(
         "--file", help="Choose file mode and supply the filename or type default"

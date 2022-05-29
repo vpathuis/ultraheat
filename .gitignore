@@ -6,3 +6,4 @@
 .coverage
 tests/example_report.txt
 /uh50_api.egg-info
+.vscode/launch.json
