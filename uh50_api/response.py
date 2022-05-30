@@ -50,7 +50,7 @@ UH50_REGEX_CONFIG = {
         "type": lambda a: datetime.datetime.strptime(a, "%Y-%m-%d&%H:%M:%S"),
     },
     "measuring_range_m3ph": {"regex": r"9.24\((.*?)\*m3ph\)", "unit": "m3ph", "type": float},
-    "settings_and_firmware": {"regex": r"9.1\((.*?)\)", "type": str},
+    "settings_and_firmware": {"regex": r"9.1\((.*?)\)", "type": lambda a: a.replace("&"," ")},
     "flow_hours": {"regex": r"9.31\((.*?)\*h\)", "type": int},
 }
 
