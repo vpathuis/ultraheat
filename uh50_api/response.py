@@ -87,32 +87,31 @@ class HeatMeterResponse:
 class HeatMeterResponseParser:
 
     def parse(self, raw_response) -> HeatMeterResponse:
-        self.raw_response = raw_response
-        heat_usage_gj = {'value': self._match("heat_usage_gj"), 'unit': UH50_REGEX_CONFIG["heat_usage_gj"]["unit"]}
-        volume_usage_m3 = {'value': self._match("volume_usage_m3"), 'unit': UH50_REGEX_CONFIG["volume_usage_m3"]["unit"]}
-        ownership_number= {'value': self._match("ownership_number")}
-        volume_previous_year_m3 = {'value': self._match("volume_previous_year_m3"), 'unit': UH50_REGEX_CONFIG["volume_previous_year_m3"]["unit"]}
-        heat_previous_year_gj = {'value': self._match("heat_previous_year_gj"), 'unit': UH50_REGEX_CONFIG["heat_previous_year_gj"]["unit"]}
-        error_number = {'value': self._match("error_number")}
-        device_number = {'value': self._match("device_number")}
-        measurement_period_minutes = {'value': self._match("measurement_period_minutes")}
-        power_max_kw ={'value': self._match("power_max_kw"), 'unit': UH50_REGEX_CONFIG["power_max_kw"]["unit"]}
-        power_max_previous_year_kw = {'value': self._match("power_max_previous_year_kw"), 'unit': UH50_REGEX_CONFIG["power_max_previous_year_kw"]["unit"]}
-        flowrate_max_m3ph = {'value': self._match("flowrate_max_m3ph"), 'unit': UH50_REGEX_CONFIG["flowrate_max_m3ph"]["unit"]}
-        flow_temperature_max_c = {'value': self._match("flow_temperature_max_c"), 'unit': UH50_REGEX_CONFIG["flow_temperature_max_c"]["unit"]}
-        flowrate_max_previous_year_m3ph = {'value': self._match("flowrate_max_previous_year_m3ph"), 'unit': UH50_REGEX_CONFIG["flowrate_max_previous_year_m3ph"]["unit"]}
-        return_temperature_max_c = {'value': self._match("return_temperature_max_c"), 'unit': UH50_REGEX_CONFIG["return_temperature_max_c"]["unit"]}
-        flow_temperature_max_previous_year_c = {'value': self._match("flow_temperature_max_previous_year_c"), 'unit': UH50_REGEX_CONFIG["flow_temperature_max_previous_year_c"]["unit"]}
-        return_temperature_max_previous_year_c = {'value': self._match("return_temperature_max_previous_year_c"), 'unit': UH50_REGEX_CONFIG["return_temperature_max_previous_year_c"]["unit"]}
-        operating_hours = {'value': self._match("operating_hours")}
-        fault_hours = {'value': self._match("fault_hours")}
-        fault_hours_previous_year = {'value': self._match("fault_hours_previous_year")}
-        yearly_set_day = {'value': self._match("yearly_set_day")}
-        monthly_set_day = {'value': self._match("monthly_set_day")}
-        meter_date_time = {'value': self._match("meter_date_time")}
-        measuring_range_m3ph = {'value': self._match("measuring_range_m3ph"), 'unit': UH50_REGEX_CONFIG["measuring_range_m3ph"]["unit"]}
-        settings_and_firmware = {'value': self._match("settings_and_firmware")}
-        flow_hours = {'value': self._match("flow_hours")}
+        heat_usage_gj = {'value': self._match("heat_usage_gj", raw_response), 'unit': UH50_REGEX_CONFIG["heat_usage_gj"]["unit"]}
+        volume_usage_m3 = {'value': self._match("volume_usage_m3", raw_response), 'unit': UH50_REGEX_CONFIG["volume_usage_m3"]["unit"]}
+        ownership_number= {'value': self._match("ownership_number", raw_response)}
+        volume_previous_year_m3 = {'value': self._match("volume_previous_year_m3", raw_response), 'unit': UH50_REGEX_CONFIG["volume_previous_year_m3"]["unit"]}
+        heat_previous_year_gj = {'value': self._match("heat_previous_year_gj", raw_response), 'unit': UH50_REGEX_CONFIG["heat_previous_year_gj"]["unit"]}
+        error_number = {'value': self._match("error_number", raw_response)}
+        device_number = {'value': self._match("device_number", raw_response)}
+        measurement_period_minutes = {'value': self._match("measurement_period_minutes", raw_response)}
+        power_max_kw ={'value': self._match("power_max_kw", raw_response), 'unit': UH50_REGEX_CONFIG["power_max_kw"]["unit"]}
+        power_max_previous_year_kw = {'value': self._match("power_max_previous_year_kw", raw_response), 'unit': UH50_REGEX_CONFIG["power_max_previous_year_kw"]["unit"]}
+        flowrate_max_m3ph = {'value': self._match("flowrate_max_m3ph", raw_response), 'unit': UH50_REGEX_CONFIG["flowrate_max_m3ph"]["unit"]}
+        flow_temperature_max_c = {'value': self._match("flow_temperature_max_c", raw_response), 'unit': UH50_REGEX_CONFIG["flow_temperature_max_c"]["unit"]}
+        flowrate_max_previous_year_m3ph = {'value': self._match("flowrate_max_previous_year_m3ph", raw_response), 'unit': UH50_REGEX_CONFIG["flowrate_max_previous_year_m3ph"]["unit"]}
+        return_temperature_max_c = {'value': self._match("return_temperature_max_c", raw_response), 'unit': UH50_REGEX_CONFIG["return_temperature_max_c"]["unit"]}
+        flow_temperature_max_previous_year_c = {'value': self._match("flow_temperature_max_previous_year_c", raw_response), 'unit': UH50_REGEX_CONFIG["flow_temperature_max_previous_year_c"]["unit"]}
+        return_temperature_max_previous_year_c = {'value': self._match("return_temperature_max_previous_year_c", raw_response), 'unit': UH50_REGEX_CONFIG["return_temperature_max_previous_year_c"]["unit"]}
+        operating_hours = {'value': self._match("operating_hours", raw_response)}
+        fault_hours = {'value': self._match("fault_hours", raw_response)}
+        fault_hours_previous_year = {'value': self._match("fault_hours_previous_year", raw_response)}
+        yearly_set_day = {'value': self._match("yearly_set_day", raw_response)}
+        monthly_set_day = {'value': self._match("monthly_set_day", raw_response)}
+        meter_date_time = {'value': self._match("meter_date_time", raw_response)}
+        measuring_range_m3ph = {'value': self._match("measuring_range_m3ph", raw_response), 'unit': UH50_REGEX_CONFIG["measuring_range_m3ph"]["unit"]}
+        settings_and_firmware = {'value': self._match("settings_and_firmware", raw_response)}
+        flow_hours = {'value': self._match("flow_hours", raw_response)}
 
         return HeatMeterResponse(
             heat_usage_gj,
@@ -143,9 +142,9 @@ class HeatMeterResponseParser:
         )
 
     
-    def _match(self, name):
+    def _match(self, name, raw_response):
         str_match = re.search(
-            UH50_REGEX_CONFIG[name]["regex"], str(self.raw_response), re.M | re.I
+            UH50_REGEX_CONFIG[name]["regex"], str(raw_response), re.M | re.I
         )
         if str_match:
             try:
