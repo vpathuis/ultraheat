@@ -1,7 +1,7 @@
 """
 Reads raw Heat Meter data and returns a HeatMeterResponse object
 """
-from uh50_api.response import HeatMeterResponse
+from uh50_api.response import HeatMeterResponse, HeatMeterResponseParser
 
 
 class HeatMeterService:
@@ -14,7 +14,7 @@ class HeatMeterService:
 
     def read(self) -> HeatMeterResponse:
         raw_response = self.reader.read()
-        return HeatMeterResponse(raw_response)
+        return HeatMeterResponseParser().parse(raw_response)
 
     def validate(self) -> str:
         """Validates the connection, returning the model number"""
