@@ -43,8 +43,8 @@ UH50_REGEX_CONFIG = {
     "operating_hours": {"regex": r"6.31\((.*?)\*h\)", "type": int},
     "fault_hours": {"regex": r"6.32\((.*?)\*h\)", "type": int},
     "fault_hours_previous_year": {"regex": r"6.32\*01\((.*?)\*h\)", "type": int},
-    "yearly_set_day": {"regex": r"6.36\((.*?)\)", "type": str},
-    "monthly_set_day": {"regex": r"6.36\*02\((.*?)\)", "type": str},
+    "yearly_set_day": {"regex": r"6.36\((.*?)\)", "type": lambda a: a.replace("&"," ")},
+    "monthly_set_day": {"regex": r"6.36\*02\((.*?)\)", "type": lambda a: a.replace("&"," ")},
     "meter_date_time": {
         "regex": r"9.36\((.*?)\)",
         "type": lambda a: datetime.datetime.strptime(a, "%Y-%m-%d&%H:%M:%S"),
