@@ -13,8 +13,8 @@ class UH50Reader:
     def validate(self) -> str:
         "Open connection to the UH50 and get the model name, thereby validating the connection"
         with self._connect_serial() as conn:
-            self._wake_up(conn)
-        return self.model
+            model = self._wake_up(conn)
+        return model
 
     def read(self) -> str:
         "Reads the UH50 on the specified port, returning the full string"
@@ -23,7 +23,7 @@ class UH50Reader:
 
     def _connect_serial(self) -> Serial:
         "Make the connection to the serial device"
-        return serial.Serial(
+        return Serial(
             self._port,
             baudrate=300,
             bytesize=serial.SEVENBITS,
@@ -50,7 +50,7 @@ class UH50Reader:
         model = conn.readline().decode("utf-8")[1:9]
         if not (model):
             raise Exception("No model could be read")
-        return
+        return model
 
     def _get_data(self, conn):
         self._wake_up(conn)
