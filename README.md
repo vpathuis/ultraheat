@@ -29,9 +29,11 @@ response_data = heat_meter_service.read()
 heat_meter_service = HeatMeterService(UH50Reader(args.port))
 response_data = heat_meter_service.read()
 
-print('model :',heat_meter.model)
-print('GJ :',heat_meter.heat_usage_gj)
-print('m3 :',heat_meter.volume_usage_m3)
+print('model :',heat_meter.model['value'])
+print('GJ :',heat_meter.heat_usage_gj['value'])
+print('m3 :',heat_meter.volume_usage_m3['value'])
+..
+print('m3 :',heat_meter.volume_usage_m3['unit'])
 etc..
 
 ```
