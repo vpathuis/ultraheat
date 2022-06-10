@@ -2,10 +2,10 @@ import argparse, sys
 from pprint import pprint
 import os
 import sys
-from uh50_api.find_ports import find_ports
-from uh50_api.service import HeatMeterService
-from uh50_api.file_reader import FileReader
-from uh50_api.uh50_reader import UH50Reader
+from landisgyr_ultraheat_api.find_ports import find_ports
+from landisgyr_ultraheat_api.service import HeatMeterService
+from landisgyr_ultraheat_api.file_reader import FileReader
+from landisgyr_ultraheat_api.ultraheat_reader import UltraheatReader
 
 parser = argparse.ArgumentParser()
 
@@ -48,10 +48,10 @@ if args.file:
 
 elif args.port:
     print(
-        "WARNING: everytime the UH50-unit is read, battery time of the UH50 will go down by about 30 minutes!"
+        "WARNING: everytime the unit is read, battery time will go down by about 30 minutes!"
     )
     print("Reading ... this will take some time...")
-    reader = UH50Reader(args.port)
+    reader = UltraheatReader(args.port)
 else:
     parser.print_help()
     exit()

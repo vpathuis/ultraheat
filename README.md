@@ -1,9 +1,9 @@
-# UH50 Python package
-This module reads from the Landys & Gyr UH50 heat measuring unit and returns the current GJ and m3 meters.
+# Landis+Gyr Heat Meter Python package
+This module reads from the Landys & Gyr Ultraheat heat meter unit and returns the meter values.
 Note: An (USB) IR reader is needed and connected to the machine running the python script
 
-WARNING: everytime this is called, battery time of the UH50 will go down by about 30 minutes!
-This package has been tested with the Landys & Gyr UH50 type LUGCUH50. Other models are likely to work as well.
+WARNING: everytime this is called, battery time of the Ultraheat will go down by about 30 minutes!
+This package has been tested with the Landys & Gyr Ultraheat type UH50 (LUGCUH50). Other models are likely to work as well.
 
 ## Using the python integration from CLI
 To use the module as a script, call the module directly with an -h flag, which will explain how to use it.
@@ -11,10 +11,10 @@ Reading the serial port requires access to the serial ports and might only works
 
 ## Using the python integration as API
 ```python
-import uh50_api
+import landisgyr_heat_meter_api as hm
 
 # check available ports
-ports = uh50_api.find_ports() 
+ports = hm.find_ports() 
 for p in ports:
     print(p.device)
 print(len(ports), 'ports found')
@@ -22,11 +22,11 @@ print(len(ports), 'ports found')
 # read the device from file for integration testing purposes
 path = os.path.abspath(os.path.dirname(__file__))
 file_name = os.path.join(path, "tests", "LUGCUH50_dummy.txt")
-heat_meter_service = HeatMeterService(FileReader(file_name))
+heat_meter_service = hm.HeatMeterService(hm.FileReader(file_name))
 response_data = heat_meter_service.read()
 
-# read the UH50 device
-heat_meter_service = HeatMeterService(UH50Reader(args.port))
+# read the Ultraheat device
+heat_meter_service = hm.HeatMeterService(hm.UltraheatReader(args.port))
 response_data = heat_meter_service.read()
 
 print('model :',heat_meter.model['value'])
