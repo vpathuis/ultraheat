@@ -2,10 +2,10 @@ import argparse, sys
 from pprint import pprint
 import os
 import sys
-from landisgyr_ultraheat_api.find_ports import find_ports
-from landisgyr_ultraheat_api.service import HeatMeterService
-from landisgyr_ultraheat_api.file_reader import FileReader
-from landisgyr_ultraheat_api.ultraheat_reader import UltraheatReader
+from ultraheat_api.find_ports import find_ports
+from ultraheat_api.service import HeatMeterService
+from ultraheat_api.file_reader import FileReader
+from ultraheat_api.ultraheat_reader import UltraheatReader
 
 parser = argparse.ArgumentParser()
 

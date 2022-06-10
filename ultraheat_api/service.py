@@ -1,7 +1,7 @@
 """
 Reads raw Heat Meter data and returns a HeatMeterResponse object
 """
-from landisgyr_ultraheat_api.response import HeatMeterResponse, HeatMeterResponseParser
+from ultraheat_api.response import HeatMeterResponse, HeatMeterResponseParser
 
 
 class HeatMeterService:

@@ -11,7 +11,7 @@ Reading the serial port requires access to the serial ports and might only works
 
 ## Using the python integration as API
 ```python
-import landisgyr_heat_meter_api as hm
+import ultraheat_api as hm
 
 # check available ports
 ports = hm.find_ports() 

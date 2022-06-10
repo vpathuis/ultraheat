@@ -1,10 +1,8 @@
 /__pycache__
-/landisgyr_heat_meter_api/__pycache__
 /tests/__pycache__
 /venv
 /dist
 .coverage
 tests/example_report.txt
-/landisgyr_heat_meter_api.egg-info
 .vscode/launch.json
-landisgyr_ultraheat_api/__pycache__/
+ultraheat_api/__pycache__/
