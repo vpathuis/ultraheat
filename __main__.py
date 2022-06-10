@@ -41,7 +41,7 @@ if args.file:
     if args.file == "default":
         print("Using default dummy file")
         path = os.path.abspath(os.path.dirname(__file__))
-        file_name = os.path.join(path, "tests", "LUGCUH50_dummy.txt")
+        file_name = os.path.join(path, "tests", "LUGCUH50_dummy_utf8.txt")
     else:
         file_name = args.file
     reader = FileReader(file_name)

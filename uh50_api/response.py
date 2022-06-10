@@ -54,34 +54,33 @@ UH50_REGEX_CONFIG = {
     "flow_hours": {"regex": r"9.31\((.*?)\*h\)", "type": int},
 }
 
-
 @dataclass
 class HeatMeterResponse:
-    heat_usage_gj: float
-    volume_usage_m3: float
-    ownership_number: str
-    volume_previous_year_m3: float
-    heat_previous_year_gj: float
-    error_number: str
-    device_number: str
-    measurement_period_minutes: int
-    power_max_kw: float
-    power_max_previous_year_kw: float
-    flowrate_max_m3ph: float
-    flow_temperature_max_c: float
-    flowrate_max_previous_year_m3ph: float
-    return_temperature_max_c: float
-    flow_temperature_max_previous_year_c: float
-    return_temperature_max_previous_year_c: float
-    operating_hours: int
-    fault_hours: int
-    fault_hours_previous_year: int
-    yearly_set_day: str
-    monthly_set_day: str
-    meter_date_time: datetime.datetime
-    measuring_range_m3ph: float
-    settings_and_firmware: str
-    flow_hours: int
+    heat_usage_gj: dict
+    volume_usage_m3: dict
+    ownership_number: dict
+    volume_previous_year_m3: dict
+    heat_previous_year_gj: dict
+    error_number: dict
+    device_number: dict
+    measurement_period_minutes: dict
+    power_max_kw: dict
+    power_max_previous_year_kw: dict
+    flowrate_max_m3ph: dict
+    flow_temperature_max_c: dict
+    flowrate_max_previous_year_m3ph: dict
+    return_temperature_max_c: dict
+    flow_temperature_max_previous_year_c: dict
+    return_temperature_max_previous_year_c: dict
+    operating_hours: dict
+    fault_hours: dict
+    fault_hours_previous_year: dict
+    yearly_set_day: dict
+    monthly_set_day: dict
+    meter_date_time: dict
+    measuring_range_m3ph: dict
+    settings_and_firmware: dict
+    flow_hours: dict
 
 
 class HeatMeterResponseParser:
