@@ -1,5 +1,5 @@
 """ 
-Reads raw UH50 response data from a file. 
+Reads raw response data from a file. 
 This is for (integration) testing purposes, so you won't need to drain the battery while doing initial integration testing.
 """
 

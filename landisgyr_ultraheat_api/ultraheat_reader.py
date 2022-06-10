@@ -1,23 +1,23 @@
 """ 
-Reads raw UH50 response data from the UH50 unit. 
+Reads raw response data from the Ultraheat unit. 
 To test the connection use validate, which will return the model name.
 """
 import serial
 from serial import Serial
 
 
-class UH50Reader:
+class UltraheatReader:
     def __init__(self, port) -> None:
         self._port = port
 
     def validate(self) -> str:
-        "Open connection to the UH50 and get the model name, thereby validating the connection"
+        "Open connection to the device and get the model name, thereby validating the connection"
         with self._connect_serial() as conn:
             model = self._wake_up(conn)
         return model
 
     def read(self) -> str:
-        "Reads the UH50 on the specified port, returning the full string"
+        "Reads the device on the specified port, returning the full string"
         with self._connect_serial() as conn:
             return self._get_data(conn)
 

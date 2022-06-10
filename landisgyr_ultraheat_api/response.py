@@ -1,6 +1,6 @@
 """
 Formats the raw reponse data into a HeatMeterResponse object
-For different models, the raw data could be different. In these cases the UH50_REGEX_CONFIG might have to be modified.
+For different models, the raw data could be different. In these cases the RESPONSE_CONFIG might have to be modified.
 """
 
 from dataclasses import dataclass
@@ -11,7 +11,7 @@ import re
 #     return float(string)
 
 # defines the search expressions used when parsing the response from the heat meter
-UH50_REGEX_CONFIG = {
+RESPONSE_CONFIG = {
     "heat_usage_gj": {"regex": r"6.8\((.*?)\*GJ\)", "unit": "GJ", "type": float},
     "volume_usage_m3": {"regex": r"6.26\((.*?)\*m3\)", "unit": "m3", "type": float},
     "ownership_number": {"regex": r"9.21\((.*?)\)", "type": str},
@@ -86,29 +86,29 @@ class HeatMeterResponse:
 class HeatMeterResponseParser:
 
     def parse(self, raw_response) -> HeatMeterResponse:
-        heat_usage_gj = {'value': self._match("heat_usage_gj", raw_response), 'unit': UH50_REGEX_CONFIG["heat_usage_gj"]["unit"]}
-        volume_usage_m3 = {'value': self._match("volume_usage_m3", raw_response), 'unit': UH50_REGEX_CONFIG["volume_usage_m3"]["unit"]}
+        heat_usage_gj = {'value': self._match("heat_usage_gj", raw_response), 'unit': RESPONSE_CONFIG["heat_usage_gj"]["unit"]}
+        volume_usage_m3 = {'value': self._match("volume_usage_m3", raw_response), 'unit': RESPONSE_CONFIG["volume_usage_m3"]["unit"]}
         ownership_number= {'value': self._match("ownership_number", raw_response)}
-        volume_previous_year_m3 = {'value': self._match("volume_previous_year_m3", raw_response), 'unit': UH50_REGEX_CONFIG["volume_previous_year_m3"]["unit"]}
-        heat_previous_year_gj = {'value': self._match("heat_previous_year_gj", raw_response), 'unit': UH50_REGEX_CONFIG["heat_previous_year_gj"]["unit"]}
+        volume_previous_year_m3 = {'value': self._match("volume_previous_year_m3", raw_response), 'unit': RESPONSE_CONFIG["volume_previous_year_m3"]["unit"]}
+        heat_previous_year_gj = {'value': self._match("heat_previous_year_gj", raw_response), 'unit': RESPONSE_CONFIG["heat_previous_year_gj"]["unit"]}
         error_number = {'value': self._match("error_number", raw_response)}
         device_number = {'value': self._match("device_number", raw_response)}
         measurement_period_minutes = {'value': self._match("measurement_period_minutes", raw_response)}
-        power_max_kw ={'value': self._match("power_max_kw", raw_response), 'unit': UH50_REGEX_CONFIG["power_max_kw"]["unit"]}
-        power_max_previous_year_kw = {'value': self._match("power_max_previous_year_kw", raw_response), 'unit': UH50_REGEX_CONFIG["power_max_previous_year_kw"]["unit"]}
-        flowrate_max_m3ph = {'value': self._match("flowrate_max_m3ph", raw_response), 'unit': UH50_REGEX_CONFIG["flowrate_max_m3ph"]["unit"]}
-        flow_temperature_max_c = {'value': self._match("flow_temperature_max_c", raw_response), 'unit': UH50_REGEX_CONFIG["flow_temperature_max_c"]["unit"]}
-        flowrate_max_previous_year_m3ph = {'value': self._match("flowrate_max_previous_year_m3ph", raw_response), 'unit': UH50_REGEX_CONFIG["flowrate_max_previous_year_m3ph"]["unit"]}
-        return_temperature_max_c = {'value': self._match("return_temperature_max_c", raw_response), 'unit': UH50_REGEX_CONFIG["return_temperature_max_c"]["unit"]}
-        flow_temperature_max_previous_year_c = {'value': self._match("flow_temperature_max_previous_year_c", raw_response), 'unit': UH50_REGEX_CONFIG["flow_temperature_max_previous_year_c"]["unit"]}
-        return_temperature_max_previous_year_c = {'value': self._match("return_temperature_max_previous_year_c", raw_response), 'unit': UH50_REGEX_CONFIG["return_temperature_max_previous_year_c"]["unit"]}
+        power_max_kw ={'value': self._match("power_max_kw", raw_response), 'unit': RESPONSE_CONFIG["power_max_kw"]["unit"]}
+        power_max_previous_year_kw = {'value': self._match("power_max_previous_year_kw", raw_response), 'unit': RESPONSE_CONFIG["power_max_previous_year_kw"]["unit"]}
+        flowrate_max_m3ph = {'value': self._match("flowrate_max_m3ph", raw_response), 'unit': RESPONSE_CONFIG["flowrate_max_m3ph"]["unit"]}
+        flow_temperature_max_c = {'value': self._match("flow_temperature_max_c", raw_response), 'unit': RESPONSE_CONFIG["flow_temperature_max_c"]["unit"]}
+        flowrate_max_previous_year_m3ph = {'value': self._match("flowrate_max_previous_year_m3ph", raw_response), 'unit': RESPONSE_CONFIG["flowrate_max_previous_year_m3ph"]["unit"]}
+        return_temperature_max_c = {'value': self._match("return_temperature_max_c", raw_response), 'unit': RESPONSE_CONFIG["return_temperature_max_c"]["unit"]}
+        flow_temperature_max_previous_year_c = {'value': self._match("flow_temperature_max_previous_year_c", raw_response), 'unit': RESPONSE_CONFIG["flow_temperature_max_previous_year_c"]["unit"]}
+        return_temperature_max_previous_year_c = {'value': self._match("return_temperature_max_previous_year_c", raw_response), 'unit': RESPONSE_CONFIG["return_temperature_max_previous_year_c"]["unit"]}
         operating_hours = {'value': self._match("operating_hours", raw_response)}
         fault_hours = {'value': self._match("fault_hours", raw_response)}
         fault_hours_previous_year = {'value': self._match("fault_hours_previous_year", raw_response)}
         yearly_set_day = {'value': self._match("yearly_set_day", raw_response)}
         monthly_set_day = {'value': self._match("monthly_set_day", raw_response)}
         meter_date_time = {'value': self._match("meter_date_time", raw_response)}
-        measuring_range_m3ph = {'value': self._match("measuring_range_m3ph", raw_response), 'unit': UH50_REGEX_CONFIG["measuring_range_m3ph"]["unit"]}
+        measuring_range_m3ph = {'value': self._match("measuring_range_m3ph", raw_response), 'unit': RESPONSE_CONFIG["measuring_range_m3ph"]["unit"]}
         settings_and_firmware = {'value': self._match("settings_and_firmware", raw_response)}
         flow_hours = {'value': self._match("flow_hours", raw_response)}
 
@@ -143,10 +143,10 @@ class HeatMeterResponseParser:
     
     def _match(self, name, raw_response):
         str_match = re.search(
-            UH50_REGEX_CONFIG[name]["regex"], str(raw_response), re.M | re.I
+            RESPONSE_CONFIG[name]["regex"], str(raw_response), re.M | re.I
         )
         if str_match:
             try:
-                return UH50_REGEX_CONFIG[name]["type"](str_match.group(1))
+                return RESPONSE_CONFIG[name]["type"](str_match.group(1))
             except ValueError:
                 raise

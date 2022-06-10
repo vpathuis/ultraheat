@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import unittest
 from unittest.mock import patch
-from uh50_api import FileReader, UH50Reader, HeatMeterService
+from landisgyr_ultraheat_api import FileReader, UltraheatReader, HeatMeterService
 
 
 DUMMY_FILE = 'LUGCUH50_dummy_utf8.txt'
@@ -16,7 +16,7 @@ dummy_file_path_error = os.path.join(path,DUMMY_FILE_ERROR)
 with open(dummy_file_path, "rb") as f:
     mock_readline = f.read().splitlines()
 
-class UH50Test(unittest.TestCase):
+class HeatMeterTest(unittest.TestCase):
 
     def assert_response_data(self, response_data):
         # check the response dummy data 
@@ -50,18 +50,18 @@ class UH50Test(unittest.TestCase):
                          response_data.settings_and_firmware['value'])
         self.assertEqual(28849, response_data.flow_hours['value'])
 
-    @patch('uh50_api.uh50_reader.Serial')
+    @patch('landisgyr_ultraheat_api.ultraheat_reader.Serial')
     def test_validate_port(self, mock_Serial):
         mock_Serial().__enter__().readline.side_effect = mock_readline
-        reader = UH50Reader(DUMMY_PORT)
+        reader = UltraheatReader(DUMMY_PORT)
 
         heat_meter_service = HeatMeterService(reader)
         self.assertEqual('LUGCUH50', heat_meter_service.validate())
 
-    @patch('uh50_api.uh50_reader.Serial')
+    @patch('landisgyr_ultraheat_api.ultraheat_reader.Serial')
     def test_read_port(self, mock_Serial):
         mock_Serial().__enter__().readline.side_effect = mock_readline
-        reader = UH50Reader(DUMMY_PORT)
+        reader = UltraheatReader(DUMMY_PORT)
 
         heat_meter_service = HeatMeterService(reader)
         response_data = heat_meter_service.read()

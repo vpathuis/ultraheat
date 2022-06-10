@@ -7,15 +7,15 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
 setup(
-    name="uh50_api",
-    version="0.3.3",
-    description="Reading usage data from the Landys & Gyr UH50 heat measuring unit",
+    name="landisgyr_ultraheat_api",
+    version="0.4.0",
+    description="Reading usage data from the Landys & Gyr Ultraheat heat meter unit",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/vpathuis/uh50",
     author="vpathuis",
     license="MIT",
-    packages=["uh50_api"],
+    packages=["landisgyr_ultraheat_api"],
     install_requires=[
         "pyserial",
     ],
