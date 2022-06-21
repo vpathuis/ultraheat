@@ -55,61 +55,61 @@ RESPONSE_CONFIG = {
 @dataclass
 class HeatMeterResponse:
     model: str
-    heat_usage_gj: dict
-    volume_usage_m3: dict
-    ownership_number: dict
-    volume_previous_year_m3: dict
-    heat_previous_year_gj: dict
-    error_number: dict
-    device_number: dict
-    measurement_period_minutes: dict
-    power_max_kw: dict
-    power_max_previous_year_kw: dict
-    flowrate_max_m3ph: dict
-    flow_temperature_max_c: dict
-    flowrate_max_previous_year_m3ph: dict
-    return_temperature_max_c: dict
-    flow_temperature_max_previous_year_c: dict
-    return_temperature_max_previous_year_c: dict
-    operating_hours: dict
-    fault_hours: dict
-    fault_hours_previous_year: dict
-    yearly_set_day: dict
-    monthly_set_day: dict
-    meter_date_time: dict
-    measuring_range_m3ph: dict
-    settings_and_firmware: dict
-    flow_hours: dict
+    heat_usage_gj: float
+    volume_usage_m3: float
+    ownership_number: str
+    volume_previous_year_m3: float
+    heat_previous_year_gj: float
+    error_number: str
+    device_number: str
+    measurement_period_minutes: int
+    power_max_kw: float
+    power_max_previous_year_kw: float
+    flowrate_max_m3ph: float
+    flow_temperature_max_c: float
+    flowrate_max_previous_year_m3ph: float
+    return_temperature_max_c: float
+    flow_temperature_max_previous_year_c: float
+    return_temperature_max_previous_year_c: float
+    operating_hours: int
+    fault_hours: int
+    fault_hours_previous_year: int
+    yearly_set_day: str
+    monthly_set_day: str
+    meter_date_time: datetime.datetime
+    measuring_range_m3ph: float
+    settings_and_firmware: str
+    flow_hours: int
 
 
 class HeatMeterResponseParser:
 
     def parse(self, model, raw_response) -> HeatMeterResponse:
-        heat_usage_gj = {'value': self._match("heat_usage_gj", raw_response), 'unit': RESPONSE_CONFIG["heat_usage_gj"]["unit"]}
-        volume_usage_m3 = {'value': self._match("volume_usage_m3", raw_response), 'unit': RESPONSE_CONFIG["volume_usage_m3"]["unit"]}
-        ownership_number= {'value': self._match("ownership_number", raw_response)}
-        volume_previous_year_m3 = {'value': self._match("volume_previous_year_m3", raw_response), 'unit': RESPONSE_CONFIG["volume_previous_year_m3"]["unit"]}
-        heat_previous_year_gj = {'value': self._match("heat_previous_year_gj", raw_response), 'unit': RESPONSE_CONFIG["heat_previous_year_gj"]["unit"]}
-        error_number = {'value': self._match("error_number", raw_response)}
-        device_number = {'value': self._match("device_number", raw_response)}
-        measurement_period_minutes = {'value': self._match("measurement_period_minutes", raw_response)}
-        power_max_kw ={'value': self._match("power_max_kw", raw_response), 'unit': RESPONSE_CONFIG["power_max_kw"]["unit"]}
-        power_max_previous_year_kw = {'value': self._match("power_max_previous_year_kw", raw_response), 'unit': RESPONSE_CONFIG["power_max_previous_year_kw"]["unit"]}
-        flowrate_max_m3ph = {'value': self._match("flowrate_max_m3ph", raw_response), 'unit': RESPONSE_CONFIG["flowrate_max_m3ph"]["unit"]}
-        flow_temperature_max_c = {'value': self._match("flow_temperature_max_c", raw_response), 'unit': RESPONSE_CONFIG["flow_temperature_max_c"]["unit"]}
-        flowrate_max_previous_year_m3ph = {'value': self._match("flowrate_max_previous_year_m3ph", raw_response), 'unit': RESPONSE_CONFIG["flowrate_max_previous_year_m3ph"]["unit"]}
-        return_temperature_max_c = {'value': self._match("return_temperature_max_c", raw_response), 'unit': RESPONSE_CONFIG["return_temperature_max_c"]["unit"]}
-        flow_temperature_max_previous_year_c = {'value': self._match("flow_temperature_max_previous_year_c", raw_response), 'unit': RESPONSE_CONFIG["flow_temperature_max_previous_year_c"]["unit"]}
-        return_temperature_max_previous_year_c = {'value': self._match("return_temperature_max_previous_year_c", raw_response), 'unit': RESPONSE_CONFIG["return_temperature_max_previous_year_c"]["unit"]}
-        operating_hours = {'value': self._match("operating_hours", raw_response)}
-        fault_hours = {'value': self._match("fault_hours", raw_response)}
-        fault_hours_previous_year = {'value': self._match("fault_hours_previous_year", raw_response)}
-        yearly_set_day = {'value': self._match("yearly_set_day", raw_response)}
-        monthly_set_day = {'value': self._match("monthly_set_day", raw_response)}
-        meter_date_time = {'value': self._match("meter_date_time", raw_response)}
-        measuring_range_m3ph = {'value': self._match("measuring_range_m3ph", raw_response), 'unit': RESPONSE_CONFIG["measuring_range_m3ph"]["unit"]}
-        settings_and_firmware = {'value': self._match("settings_and_firmware", raw_response)}
-        flow_hours = {'value': self._match("flow_hours", raw_response)}
+        heat_usage_gj = self._match("heat_usage_gj", raw_response)
+        volume_usage_m3 = self._match("volume_usage_m3", raw_response)
+        ownership_number= self._match("ownership_number", raw_response)
+        volume_previous_year_m3 = self._match("volume_previous_year_m3", raw_response)
+        heat_previous_year_gj = self._match("heat_previous_year_gj", raw_response)
+        error_number = self._match("error_number", raw_response)
+        device_number = self._match("device_number", raw_response)
+        measurement_period_minutes = self._match("measurement_period_minutes", raw_response)
+        power_max_kw = self._match("power_max_kw", raw_response)
+        power_max_previous_year_kw = self._match("power_max_previous_year_kw", raw_response)
+        flowrate_max_m3ph = self._match("flowrate_max_m3ph", raw_response)
+        flow_temperature_max_c = self._match("flow_temperature_max_c", raw_response)
+        flowrate_max_previous_year_m3ph = self._match("flowrate_max_previous_year_m3ph", raw_response)
+        return_temperature_max_c = self._match("return_temperature_max_c", raw_response)
+        flow_temperature_max_previous_year_c = self._match("flow_temperature_max_previous_year_c", raw_response)
+        return_temperature_max_previous_year_c = self._match("return_temperature_max_previous_year_c", raw_response)
+        operating_hours = self._match("operating_hours", raw_response)
+        fault_hours = self._match("fault_hours", raw_response)
+        fault_hours_previous_year = self._match("fault_hours_previous_year", raw_response)
+        yearly_set_day = self._match("yearly_set_day", raw_response)
+        monthly_set_day = self._match("monthly_set_day", raw_response)
+        meter_date_time = self._match("meter_date_time", raw_response)
+        measuring_range_m3ph = self._match("measuring_range_m3ph", raw_response)
+        settings_and_firmware = self._match("settings_and_firmware", raw_response)
+        flow_hours = self._match("flow_hours", raw_response)
 
         return HeatMeterResponse(
             model,
