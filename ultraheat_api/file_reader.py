@@ -15,5 +15,5 @@ class FileReader:
 
     def read(self) -> str:
         with open(self._file_name, "rb") as f:
-            _ = f.readline() # ignore the line with the model
-            return f.read().decode("utf-8")
+            model = f.readline().decode("utf-8")[1:9] 
+            return (model, f.read().decode("utf-8"))

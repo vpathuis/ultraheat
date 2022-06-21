@@ -7,8 +7,6 @@ from dataclasses import dataclass
 import datetime
 import re
 
-# def tofloat(string):
-#     return float(string)
 
 # defines the search expressions used when parsing the response from the heat meter
 RESPONSE_CONFIG = {
@@ -56,6 +54,7 @@ RESPONSE_CONFIG = {
 
 @dataclass
 class HeatMeterResponse:
+    model: str
     heat_usage_gj: dict
     volume_usage_m3: dict
     ownership_number: dict
@@ -85,7 +84,7 @@ class HeatMeterResponse:
 
 class HeatMeterResponseParser:
 
-    def parse(self, raw_response) -> HeatMeterResponse:
+    def parse(self, model, raw_response) -> HeatMeterResponse:
         heat_usage_gj = {'value': self._match("heat_usage_gj", raw_response), 'unit': RESPONSE_CONFIG["heat_usage_gj"]["unit"]}
         volume_usage_m3 = {'value': self._match("volume_usage_m3", raw_response), 'unit': RESPONSE_CONFIG["volume_usage_m3"]["unit"]}
         ownership_number= {'value': self._match("ownership_number", raw_response)}
@@ -113,6 +112,7 @@ class HeatMeterResponseParser:
         flow_hours = {'value': self._match("flow_hours", raw_response)}
 
         return HeatMeterResponse(
+            model,
             heat_usage_gj,
             volume_usage_m3,
             ownership_number,
