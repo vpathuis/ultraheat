@@ -11,16 +11,11 @@ class UltraheatReader:
     def __init__(self, port) -> None:
         self._port = port
 
-    def validate(self) -> str:
-        "Open connection to the device and get the model name, thereby validating the connection"
-        with self._connect_serial() as conn:
-            model = self._wake_up(conn)
-        return model
-
     def read(self) -> str:
         "Reads the device on the specified port, returning the full string"
         with self._connect_serial() as conn:
             return self._get_data(conn)
+
 
     def _connect_serial(self) -> Serial:
         "Make the connection to the serial device"

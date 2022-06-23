@@ -51,13 +51,6 @@ class HeatMeterTest(unittest.TestCase):
                          response_data.settings_and_firmware)
         self.assertEqual(28849, response_data.flow_hours)
 
-    @patch('ultraheat_api.ultraheat_reader.Serial')
-    def test_validate_port(self, mock_Serial):
-        mock_Serial().__enter__().readline.side_effect = mock_readline
-        reader = UltraheatReader(DUMMY_PORT)
-
-        heat_meter_service = HeatMeterService(reader)
-        self.assertEqual('LUGCUH50', heat_meter_service.validate())
 
     @patch('ultraheat_api.ultraheat_reader.Serial')
     def test_read_port(self, mock_Serial):
@@ -69,18 +62,13 @@ class HeatMeterTest(unittest.TestCase):
         self.assert_response_data(response_data)
 
 
-    def test_validate_file(self):
-        reader = FileReader(dummy_file_path)
-
-        heat_meter_service = HeatMeterService(reader)
-        self.assertEqual('LUGCUH50', heat_meter_service.validate())
-
     def test_heat_meter_read_file(self):
         heat_meter_service = HeatMeterService(
             FileReader(dummy_file_path)
         )
         response_data = heat_meter_service.read()
         self.assert_response_data(response_data)
+
 
     def test_heat_meter_read_file_conversion_error(self):
         heat_meter_service: HeatMeterService = HeatMeterService(
