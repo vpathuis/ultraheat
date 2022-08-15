@@ -5,21 +5,17 @@ To test the connection use validate, which will return the model name.
 import serial
 from serial import Serial
 
+MAX_LINES_ULTRAHEAT_REPONSE = 26
 
 class UltraheatReader:
     def __init__(self, port) -> None:
         self._port = port
 
-    def validate(self) -> str:
-        "Open connection to the device and get the model name, thereby validating the connection"
-        with self._connect_serial() as conn:
-            model = self._wake_up(conn)
-        return model
-
     def read(self) -> str:
         "Reads the device on the specified port, returning the full string"
         with self._connect_serial() as conn:
             return self._get_data(conn)
+
 
     def _connect_serial(self) -> Serial:
         "Make the connection to the serial device"
@@ -53,16 +49,16 @@ class UltraheatReader:
         return model
 
     def _get_data(self, conn):
-        self._wake_up(conn)
+        model = self._wake_up(conn)
         # Now switch to 2400 BAUD. This could be different for other models. Let me know if you experience problems.
         conn.baudrate = 2400
         ir_lines = ""
         ir_line = ""
         iteration = 0
         # reading all lines (typically 25 lines)
-        while ir_line != b"" and iteration < 26:
+        while ir_line != b"" and iteration < MAX_LINES_ULTRAHEAT_REPONSE:
             iteration += 1
             ir_line = conn.readline()
             ir_lines += ir_line.decode("utf-8")
 
-        return str(ir_lines)
+        return (model, str(ir_lines))

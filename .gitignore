@@ -6,3 +6,4 @@
 tests/example_report.txt
 .vscode/launch.json
 ultraheat_api/__pycache__/
+ultraheat_api.egg-info/

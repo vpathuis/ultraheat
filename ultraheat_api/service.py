@@ -12,10 +12,7 @@ class HeatMeterService:
     def __init__(self, reader) -> None:
         self.reader = reader
 
-    def read(self) -> HeatMeterResponse:
-        raw_response = self.reader.read()
-        return HeatMeterResponseParser().parse(raw_response)
 
-    def validate(self) -> str:
-        """Validates the connection, returning the model number"""
-        return self.reader.validate()
+    def read(self) -> HeatMeterResponse:
+        (model, raw_response) = self.reader.read()
+        return HeatMeterResponseParser().parse(model, raw_response)
