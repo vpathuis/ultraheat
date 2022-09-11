@@ -3,6 +3,8 @@ Reads raw response data from the Ultraheat unit.
 To test the connection use validate, which will return the model name.
 """
 import logging
+from typing import Tuple
+
 import serial
 from serial import Serial
 
@@ -17,12 +19,12 @@ class UltraheatReader:
         self._port = port
 
     def read(self):
-        "Reads the device on the specified port, returning the full string"
+        """Reads the device on the specified port, returning the full string"""
         with self._connect_serial() as conn:
             return self._get_data(conn)
 
     def _connect_serial(self) -> Serial:
-        "Make the connection to the serial device"
+        """Make the connection to the serial device"""
         return Serial(
             self._port,
             baudrate=300,
@@ -35,12 +37,12 @@ class UltraheatReader:
         )
 
     def _wake_up(self, conn) -> str:
-        "Wake up the device and get the model number"
-        # Waking up should be done at 300 baud
+        """Wake up the device and get the model number. Waking up should be done at 300 baud."""
         # Sending /?!
         _LOGGER.debug("Waking up Ultraheat")
         conn.write(
-            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x2F\x3F\x21\x0D\x0A"
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x2F\x3F\x21\x0D\x0A "
         )
         ir_command = "/?!\x0D\x0A"
         conn.write(ir_command.encode("utf-8"))
@@ -51,12 +53,12 @@ class UltraheatReader:
         model = conn.readline().decode("utf-8")[1:9]
         if model:
             _LOGGER.debug("Got model %s", model)
-        if not (model):
+        if not model:
             _LOGGER.error("No model could be read")
             raise Exception("No model could be read")
         return model
 
-    def _get_data(self, conn):
+    def _get_data(self, conn) -> tuple[str, str]:
         model = self._wake_up(conn)
         _LOGGER.debug("Receiving data")
         # Now switch to 2400 BAUD. This could be different for other models. Let me know if you experience problems.
@@ -71,4 +73,4 @@ class UltraheatReader:
             ir_lines += ir_line.decode("utf-8")
 
         _LOGGER.debug("Read %s lines of data", iteration)
-        return (model, str(ir_lines))
+        return model, str(ir_lines)
