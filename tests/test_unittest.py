@@ -4,17 +4,17 @@ import unittest
 from unittest.mock import patch
 from ultraheat_api import FileReader, UltraheatReader, HeatMeterService
 
-
 DUMMY_FILE = 'LUGCUH50_dummy_utf8.txt'
 DUMMY_FILE_ERROR = 'LUGCUH50_dummy_error_utf8.txt'
 DUMMY_PORT = 'DUMMY'
 path = os.path.abspath(os.path.dirname(__file__))
-dummy_file_path = os.path.join(path,DUMMY_FILE)
-dummy_file_path_error = os.path.join(path,DUMMY_FILE_ERROR)
+dummy_file_path = os.path.join(path, DUMMY_FILE)
+dummy_file_path_error = os.path.join(path, DUMMY_FILE_ERROR)
 
 # Create a list from the dummy file to use as mock for reading the port
 with open(dummy_file_path, "rb") as f:
     mock_readline = f.read().splitlines()
+
 
 class HeatMeterTest(unittest.TestCase):
 
@@ -51,7 +51,6 @@ class HeatMeterTest(unittest.TestCase):
                          response_data.settings_and_firmware)
         self.assertEqual(28849, response_data.flow_hours)
 
-
     @patch('ultraheat_api.ultraheat_reader.Serial')
     def test_read_port(self, mock_Serial):
         mock_Serial().__enter__().readline.side_effect = mock_readline
@@ -61,7 +60,6 @@ class HeatMeterTest(unittest.TestCase):
         response_data = heat_meter_service.read()
         self.assert_response_data(response_data)
 
-
     def test_heat_meter_read_file(self):
         heat_meter_service = HeatMeterService(
             FileReader(dummy_file_path)
@@ -69,12 +67,12 @@ class HeatMeterTest(unittest.TestCase):
         response_data = heat_meter_service.read()
         self.assert_response_data(response_data)
 
-
     def test_heat_meter_read_file_conversion_error(self):
         heat_meter_service: HeatMeterService = HeatMeterService(
             FileReader(dummy_file_path_error))
         with self.assertRaises(ValueError):
             _ = heat_meter_service.read()
+
 
 if __name__ == '__main__':
     unittest.main()

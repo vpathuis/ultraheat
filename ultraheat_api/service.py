@@ -12,7 +12,6 @@ class HeatMeterService:
     def __init__(self, reader) -> None:
         self.reader = reader
 
-
     def read(self) -> HeatMeterResponse:
         (model, raw_response) = self.reader.read()
         return HeatMeterResponseParser().parse(model, raw_response)
