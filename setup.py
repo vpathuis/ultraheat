@@ -8,7 +8,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="ultraheat_api",
-    version="0.4.2",
+    version="0.4.3",
     description="Reading usage data from the Landys & Gyr Ultraheat heat meter unit",
     long_description=long_description,
     long_description_content_type="text/markdown",
