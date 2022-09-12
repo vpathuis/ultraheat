@@ -7,7 +7,6 @@ from dataclasses import dataclass
 import datetime
 import re
 
-
 # defines the search expressions used when parsing the response from the heat meter
 RESPONSE_CONFIG = {
     "heat_usage_gj": {"regex": r"6.8\((.*?)\*GJ\)", "unit": "GJ", "type": float},
@@ -23,34 +22,35 @@ RESPONSE_CONFIG = {
     "flowrate_max_m3ph": {"regex": r"6.33\((.*?)\*m3ph\)", "unit": "m3ph", "type": float},
     "flowrate_max_previous_year_m3ph": {
         "regex": r"6.33\*01\((.*?)\*m3ph\)",
-         "unit": "m3ph",
+        "unit": "m3ph",
         "type": float,
     },
     "flow_temperature_max_c": {"regex": r"9.4\((.*?)\*C", "unit": "°C", "type": float},
     "return_temperature_max_c": {"regex": r"9.4\(.*?\*C&(.*?)\*C", "unit": "°C", "type": float},
     "flow_temperature_max_previous_year_c": {
         "regex": r"9.4\*01\((.*?)\*C",
-         "unit": "°C",
+        "unit": "°C",
         "type": float,
     },
     "return_temperature_max_previous_year_c": {
         "regex": r"9.4\*01\(.*?\*C&(.*?)\*C",
-         "unit": "°C",
+        "unit": "°C",
         "type": float,
     },
     "operating_hours": {"regex": r"6.31\((.*?)\*h\)", "type": int},
     "fault_hours": {"regex": r"6.32\((.*?)\*h\)", "type": int},
     "fault_hours_previous_year": {"regex": r"6.32\*01\((.*?)\*h\)", "type": int},
-    "yearly_set_day": {"regex": r"6.36\((.*?)\)", "type": lambda a: a.replace("&"," ")},
-    "monthly_set_day": {"regex": r"6.36\*02\((.*?)\)", "type": lambda a: a.replace("&"," ")},
+    "yearly_set_day": {"regex": r"6.36\((.*?)\)", "type": lambda a: a.replace("&", " ")},
+    "monthly_set_day": {"regex": r"6.36\*02\((.*?)\)", "type": lambda a: a.replace("&", " ")},
     "meter_date_time": {
         "regex": r"9.36\((.*?)\)",
         "type": lambda a: datetime.datetime.strptime(a, "%Y-%m-%d&%H:%M:%S"),
     },
     "measuring_range_m3ph": {"regex": r"9.24\((.*?)\*m3ph\)", "unit": "m3ph", "type": float},
-    "settings_and_firmware": {"regex": r"9.1\((.*?)\)", "type": lambda a: a.replace("&"," ")},
+    "settings_and_firmware": {"regex": r"9.1\((.*?)\)", "type": lambda a: a.replace("&", " ")},
     "flow_hours": {"regex": r"9.31\((.*?)\*h\)", "type": int},
 }
+
 
 @dataclass
 class HeatMeterResponse:
@@ -87,7 +87,7 @@ class HeatMeterResponseParser:
     def parse(self, model, raw_response) -> HeatMeterResponse:
         heat_usage_gj = self._match("heat_usage_gj", raw_response)
         volume_usage_m3 = self._match("volume_usage_m3", raw_response)
-        ownership_number= self._match("ownership_number", raw_response)
+        ownership_number = self._match("ownership_number", raw_response)
         volume_previous_year_m3 = self._match("volume_previous_year_m3", raw_response)
         heat_previous_year_gj = self._match("heat_previous_year_gj", raw_response)
         error_number = self._match("error_number", raw_response)
@@ -140,7 +140,6 @@ class HeatMeterResponseParser:
             flow_hours
         )
 
-    
     def _match(self, name, raw_response):
         str_match = re.search(
             RESPONSE_CONFIG[name]["regex"], str(raw_response), re.M | re.I
