@@ -42,12 +42,8 @@ class UltraheatReader:
         _LOGGER.debug("Waking up Ultraheat")
         conn.write(
             b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x2F\x3F\x21\x0D\x0A "
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x2F\x3F\x21\x0D\x0A"
         )
-        ir_command = "/?!\x0D\x0A"
-        conn.write(ir_command.encode("utf-8"))
-        conn.flush()
-        # Read at 300 baud, this gives us the typenr
 
         # checking if we can read the model (eg. 'LUGCUH50')
         model = conn.readline().decode("utf-8")[1:9]
