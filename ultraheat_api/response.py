@@ -10,10 +10,12 @@ import re
 # defines the search expressions used when parsing the response from the heat meter
 RESPONSE_CONFIG = {
     "heat_usage_gj": {"regex": r"6.8\((.*?)\*GJ\)", "unit": "GJ", "type": float},
+    "heat_usage_mwh": {"regex": r"6.8\((.*?)\*MWh\)", "unit": "MWh", "type": float},
     "volume_usage_m3": {"regex": r"6.26\((.*?)\*m3\)", "unit": "m3", "type": float},
     "ownership_number": {"regex": r"9.21\((.*?)\)", "type": str},
     "volume_previous_year_m3": {"regex": r"6.26\*01\((.*?)\*m3\)", "unit": "m3", "type": float},
     "heat_previous_year_gj": {"regex": r"6.8\*01\((.*?)\*GJ\)", "unit": "GJ", "type": float},
+    "heat_previous_year_mwh": {"regex": r"6.8\*01\((.*?)\*MWh\)", "unit": "MWh", "type": float},
     "error_number": {"regex": r"F\((.*?)\)", "type": str},
     "device_number": {"regex": r"9.20\((.*?)\)", "type": str},
     "measurement_period_minutes": {"regex": r"6.35\((.*?)\*m\)", "type": int},
@@ -50,6 +52,8 @@ RESPONSE_CONFIG = {
     "settings_and_firmware": {"regex": r"9.1\((.*?)\)", "type": lambda a: a.replace("&", " ")},
     "flow_hours": {"regex": r"9.31\((.*?)\*h\)", "type": int},
 }
+
+MWH_TO_GJ = 3.6
 
 
 @dataclass
@@ -110,6 +114,11 @@ class HeatMeterResponseParser:
         measuring_range_m3ph = self._match("measuring_range_m3ph", raw_response)
         settings_and_firmware = self._match("settings_and_firmware", raw_response)
         flow_hours = self._match("flow_hours", raw_response)
+
+        if model == "LGUHT550":
+            # Return MWh instead of GJ
+            heat_usage_gj = self._match("heat_usage_mwh", raw_response) * MWH_TO_GJ
+            heat_previous_year_gj = self._match("heat_previous_year_mwh", raw_response) * MWH_TO_GJ
 
         return HeatMeterResponse(
             model,

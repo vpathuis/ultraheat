@@ -51,11 +51,17 @@ class UltraheatReader:
 
         # checking if we can read the model (eg. 'LUGCUH50')
         model = conn.readline().decode("utf-8")[1:9]
-        if model:
-            _LOGGER.debug("Got model %s", model)
         if not model:
-            _LOGGER.error("No model could be read")
-            raise Exception("No model could be read")
+            # Landis+Gyr UltraHeat T550 outputs two blank lines instead of a model number
+            t550_check = conn.readline().decode("utf-8") == ''
+            if t550_check:
+                model = "LGUHT550"
+            else:
+                _LOGGER.error("No model could be read")
+                raise Exception("No model could be read")
+
+        _LOGGER.debug("Got model %s", model)
+
         return model
 
     def _get_data(self, conn) -> tuple[str, str]:
