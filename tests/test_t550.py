@@ -20,12 +20,12 @@ class HeatMeterTest(unittest.TestCase):
 
     def assert_response_data(self, response_data):
         # check the response dummy data 
-        self.assertEqual('LGUHT550', response_data.model)
-        self.assertEqual(1173.8232, response_data.heat_usage_gj)   
+        self.assertEqual('LUGCUH50', response_data.model)
+        self.assertEqual(326.062, response_data.heat_usage_mwh)   
         self.assertEqual(7939.56, response_data.volume_usage_m3)
         self.assertEqual('00073600', response_data.ownership_number)
         self.assertEqual(7843.48, response_data.volume_previous_year_m3)
-        self.assertEqual(1163.7792, response_data.heat_previous_year_gj)
+        self.assertEqual(323.272, response_data.heat_previous_year_mwh)
         self.assertEqual('0', response_data.error_number)
         self.assertEqual('66935074', response_data.device_number)
         self.assertEqual(60, response_data.measurement_period_minutes)

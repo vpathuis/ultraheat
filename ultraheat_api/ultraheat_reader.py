@@ -46,18 +46,12 @@ class UltraheatReader:
         )
 
         # checking if we can read the model (eg. 'LUGCUH50')
-        model = conn.readline().decode("utf-8")[0:9]
+        model = conn.readline().decode("utf-8")[1:9]
         if model:
-            if model[0] == '!':
-                model = model[1:9]
-            if model[0] == '/':
-                # Landis+Gyr UltraHeat T550 outputs model number prefixed with '/' instead of '!'
-                model = "LGUHT550"
+            _LOGGER.debug("Got model %s", model)
         else:
             _LOGGER.error("No model could be read")
             raise Exception("No model could be read")
-
-        _LOGGER.debug("Got model %s", model)
 
         return model
 

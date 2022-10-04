@@ -11,12 +11,6 @@ class FileReader:
 
     def read(self) -> tuple[str, str]:
         with open(self._file_name, "rb") as f:
-            model = f.readline().decode("utf-8")[0:9]
-            if model:
-                if model[0] == '!':
-                    model = model[1:9]
-                if model[0] == '/':
-                    # Landis+Gyr UltraHeat T550 outputs model number prefixed with '/' instead of '!'
-                    model = "LGUHT550"
+            model = f.readline().decode("utf-8")[1:9]
                 
             return model, f.read().decode("utf-8")
