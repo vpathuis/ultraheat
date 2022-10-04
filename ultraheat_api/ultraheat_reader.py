@@ -31,7 +31,7 @@ class UltraheatReader:
             bytesize=serial.SEVENBITS,
             parity=serial.PARITY_EVEN,
             stopbits=serial.STOPBITS_TWO,
-            timeout=1,
+            timeout=5,
             xonxoff=0,
             rtscts=0,
         )
@@ -46,15 +46,16 @@ class UltraheatReader:
         )
 
         # checking if we can read the model (eg. 'LUGCUH50')
-        model = conn.readline().decode("utf-8")[1:9]
-        if not model:
-            # Landis+Gyr UltraHeat T550 outputs two blank lines instead of a model number
-            t550_check = conn.readline().decode("utf-8") == ''
-            if t550_check:
+        model = conn.readline().decode("utf-8")[0:9]
+        if model:
+            if model[0] == '!':
+                model = model[1:9]
+            if model[0] == '/':
+                # Landis+Gyr UltraHeat T550 outputs model number prefixed with '/' instead of '!'
                 model = "LGUHT550"
-            else:
-                _LOGGER.error("No model could be read")
-                raise Exception("No model could be read")
+        else:
+            _LOGGER.error("No model could be read")
+            raise Exception("No model could be read")
 
         _LOGGER.debug("Got model %s", model)
 
