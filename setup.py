@@ -12,7 +12,7 @@ setup(
     description="Reading usage data from the Landys & Gyr Ultraheat heat meter unit",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/vpathuis/uh50",
+    url="https://github.com/vpathuis/ultraheat",
     author="vpathuis",
     license="MIT",
     packages=["ultraheat_api"],
