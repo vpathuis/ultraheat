@@ -3,7 +3,7 @@ This module reads from the Landys & Gyr Ultraheat heat meter unit and returns th
 Note: An (USB) IR reader is needed and connected to the machine running the python script
 
 WARNING: everytime this is called, battery time of the Ultraheat will go down by about 30 minutes!
-This package has been tested with the Landys & Gyr Ultraheat type UH50 (LUGCUH50). Other models are likely to work as well.
+This package has been tested with the Landys & Gyr Ultraheat type UH50 and T550. Other models are likely to work as well (please contact me if you want to help/test with adding support for other models).
 
 ## Using the python integration as API
 ```python
@@ -26,17 +26,20 @@ heat_meter_service = hm.HeatMeterService(hm.UltraheatReader(args.port))
 response_data = heat_meter_service.read()
 
 print('model :',heat_meter.model)
-print('GJ :',heat_meter.heat_usage_gj)
+print('GJ :',heat_meter.heat_usage_gj)  # UH50 
+print('MWh :',heat_meter.heat_usage_mwh)  # T550 
 print('m3 :',heat_meter.volume_usage_m3)
 etc..
 
 ```
 ## Full list of available data
-- heat_usage_gj
+- heat_usage_gj (empty for T550)
+- heat_usage_mwh (empty for UH50)
 - volume_usage_m3
 - ownership_number
 - volume_previous_year_m3
-- heat_previous_year_gj
+- heat_previous_year_gj (empty for T550)
+- heat_previous_year_mwh (empty for UH50)
 - error_number
 - device_number
 - measurement_period_minutes
