@@ -31,7 +31,7 @@ class UltraheatReader:
             bytesize=serial.SEVENBITS,
             parity=serial.PARITY_EVEN,
             stopbits=serial.STOPBITS_TWO,
-            timeout=1,
+            timeout=5,
             xonxoff=0,
             rtscts=0,
         )
@@ -42,20 +42,17 @@ class UltraheatReader:
         _LOGGER.debug("Waking up Ultraheat")
         conn.write(
             b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x2F\x3F\x21\x0D\x0A "
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x2F\x3F\x21\x0D\x0A"
         )
-        ir_command = "/?!\x0D\x0A"
-        conn.write(ir_command.encode("utf-8"))
-        conn.flush()
-        # Read at 300 baud, this gives us the typenr
 
         # checking if we can read the model (eg. 'LUGCUH50')
         model = conn.readline().decode("utf-8")[1:9]
         if model:
             _LOGGER.debug("Got model %s", model)
-        if not model:
+        else:
             _LOGGER.error("No model could be read")
             raise Exception("No model could be read")
+
         return model
 
     def _get_data(self, conn) -> tuple[str, str]:
@@ -67,10 +64,10 @@ class UltraheatReader:
         ir_line = ""
         iteration = 0
         # reading all lines (typically 25 lines)
-        while ir_line != b"" and iteration < MAX_LINES_ULTRAHEAT_REPONSE:
+        while "!" not in ir_line and iteration < MAX_LINES_ULTRAHEAT_REPONSE:
             iteration += 1
-            ir_line = conn.readline()
-            ir_lines += ir_line.decode("utf-8")
+            ir_line = conn.readline().decode("utf-8")
+            ir_lines += ir_line
 
         _LOGGER.debug("Read %s lines of data", iteration)
         return model, str(ir_lines)

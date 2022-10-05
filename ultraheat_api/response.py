@@ -10,10 +10,12 @@ import re
 # defines the search expressions used when parsing the response from the heat meter
 RESPONSE_CONFIG = {
     "heat_usage_gj": {"regex": r"6.8\((.*?)\*GJ\)", "unit": "GJ", "type": float},
+    "heat_usage_mwh": {"regex": r"6.8\((.*?)\*MWh\)", "unit": "MWh", "type": float},
     "volume_usage_m3": {"regex": r"6.26\((.*?)\*m3\)", "unit": "m3", "type": float},
     "ownership_number": {"regex": r"9.21\((.*?)\)", "type": str},
     "volume_previous_year_m3": {"regex": r"6.26\*01\((.*?)\*m3\)", "unit": "m3", "type": float},
     "heat_previous_year_gj": {"regex": r"6.8\*01\((.*?)\*GJ\)", "unit": "GJ", "type": float},
+    "heat_previous_year_mwh": {"regex": r"6.8\*01\((.*?)\*MWh\)", "unit": "MWh", "type": float},
     "error_number": {"regex": r"F\((.*?)\)", "type": str},
     "device_number": {"regex": r"9.20\((.*?)\)", "type": str},
     "measurement_period_minutes": {"regex": r"6.35\((.*?)\*m\)", "type": int},
@@ -52,14 +54,17 @@ RESPONSE_CONFIG = {
 }
 
 
+
 @dataclass
 class HeatMeterResponse:
     model: str
     heat_usage_gj: float
+    heat_usage_mwh: float
     volume_usage_m3: float
     ownership_number: str
     volume_previous_year_m3: float
     heat_previous_year_gj: float
+    heat_previous_year_mwh: float
     error_number: str
     device_number: str
     measurement_period_minutes: int
@@ -86,10 +91,12 @@ class HeatMeterResponseParser:
 
     def parse(self, model, raw_response) -> HeatMeterResponse:
         heat_usage_gj = self._match("heat_usage_gj", raw_response)
+        heat_usage_mwh = self._match("heat_usage_mwh", raw_response)
         volume_usage_m3 = self._match("volume_usage_m3", raw_response)
         ownership_number = self._match("ownership_number", raw_response)
         volume_previous_year_m3 = self._match("volume_previous_year_m3", raw_response)
         heat_previous_year_gj = self._match("heat_previous_year_gj", raw_response)
+        heat_previous_year_mwh = self._match("heat_previous_year_mwh", raw_response)
         error_number = self._match("error_number", raw_response)
         device_number = self._match("device_number", raw_response)
         measurement_period_minutes = self._match("measurement_period_minutes", raw_response)
@@ -114,10 +121,12 @@ class HeatMeterResponseParser:
         return HeatMeterResponse(
             model,
             heat_usage_gj,
+            heat_usage_mwh,
             volume_usage_m3,
             ownership_number,
             volume_previous_year_m3,
             heat_previous_year_gj,
+            heat_previous_year_mwh,
             error_number,
             device_number,
             measurement_period_minutes,

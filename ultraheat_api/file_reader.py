@@ -12,4 +12,5 @@ class FileReader:
     def read(self) -> tuple[str, str]:
         with open(self._file_name, "rb") as f:
             model = f.readline().decode("utf-8")[1:9]
+                
             return model, f.read().decode("utf-8")
