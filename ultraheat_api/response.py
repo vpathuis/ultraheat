@@ -85,6 +85,7 @@ class HeatMeterResponse:
     measuring_range_m3ph: float
     settings_and_firmware: str
     flow_hours: int
+    raw_response: str
 
 
 class HeatMeterResponseParser:
@@ -146,7 +147,8 @@ class HeatMeterResponseParser:
             meter_date_time,
             measuring_range_m3ph,
             settings_and_firmware,
-            flow_hours
+            flow_hours,
+            raw_response
         )
 
     def _match(self, name, raw_response):
