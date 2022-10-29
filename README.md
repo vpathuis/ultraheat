@@ -60,6 +60,7 @@ etc..
 - measuring_range_m3ph
 - settings_and_firmware
 - flow_hours
+- raw_response
 
 ## Telegram parsing
 The telegram that is read from the Heat Meter is parsed as follows. 
