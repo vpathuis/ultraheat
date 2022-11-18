@@ -1,4 +1,5 @@
 import argparse, sys
+import logging
 from pprint import pprint
 import os
 import sys
@@ -25,10 +26,18 @@ def parse_arguments():
         action="store_true",
     )
 
+    parser.add_argument(
+        "--log",
+        help="Choose log level DEBUG, INFO, WARNING or ERROR",
+    )
+
     return parser.parse_args()
 
 
 args = parse_arguments()
+if args.log:
+    logging.basicConfig(level=args.log)
+
 if args.ports:
     print("showing available ports: ")
     ports = find_ports()

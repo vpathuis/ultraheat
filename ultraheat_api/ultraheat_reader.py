@@ -66,8 +66,11 @@ class UltraheatReader:
         # reading all lines (typically 25 lines)
         while "!" not in ir_line and iteration < MAX_LINES_ULTRAHEAT_REPONSE:
             iteration += 1
-            ir_line = conn.readline().decode("utf-8")
+            data = conn.readline()
+            _LOGGER.debug("Got: %s", data)
+            ir_line = data.decode("utf-8")
+            _LOGGER.debug("After decoding: %s", ir_line)
             ir_lines += ir_line
 
-        _LOGGER.debug("Read %s lines of data", iteration)
+        _LOGGER.debug("Finished reading %s lines of data", iteration)
         return model, str(ir_lines)
