@@ -46,7 +46,9 @@ class UltraheatReader:
         )
 
         # checking if we can read the model (eg. 'LUGCUH50')
-        model = conn.readline().decode("utf-8")[1:9]
+        data = conn.readline()
+        _LOGGER.debug("Got: %s", data)
+        model = data.decode("utf-8")[1:9]
         if model:
             _LOGGER.debug("Got model %s", model)
         else:
