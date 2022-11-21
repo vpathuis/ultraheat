@@ -1,14 +1,14 @@
-import argparse, sys
+import argparse
 import logging
 from pprint import pprint
 import os
-import sys
 from ultraheat_api.find_ports import find_ports
 from ultraheat_api.service import HeatMeterService
 from ultraheat_api.file_reader import FileReader
 from ultraheat_api.ultraheat_reader import UltraheatReader
 
 parser = argparse.ArgumentParser()
+
 
 def parse_arguments():
 
@@ -29,6 +29,16 @@ def parse_arguments():
     parser.add_argument(
         "--log",
         help="Choose log level DEBUG, INFO, WARNING or ERROR",
+    )
+
+    parser.add_argument(
+        "--brw",
+        help="Set the baudrate for waking up the default. Defaults to 300",
+    )
+
+    parser.add_argument(
+        "--brd",
+        help="Set the baudrate for reading the datastream. Defaults to 2400",
     )
 
     return parser.parse_args()
@@ -60,7 +70,13 @@ elif args.port:
         "WARNING: everytime the unit is read, battery time will go down by about 30 minutes!"
     )
     print("Reading ... this will take some time...")
-    reader = UltraheatReader(args.port)
+    baudrate_wake_up = None
+    baudrate_data_stream = None
+    if args.brw:
+        baudrate_wake_up = args.brw
+    if args.brd:
+        baudrate_data_stream = args.brd
+    reader = UltraheatReader(args.port, baudrate_wake_up, baudrate_data_stream)
 else:
     parser.print_help()
     exit()

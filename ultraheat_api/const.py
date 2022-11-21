@@ -1,0 +1,3 @@
+"""Define constants for ultraheat"""
+DEFAULT_BAUDRATE_WAKE_UP = 300
+DEFAULT_BAUDRATE_DATA_STREAM = 2400

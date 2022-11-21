@@ -5,8 +5,10 @@ To test the connection use validate, which will return the model name.
 import logging
 from typing import Tuple
 
+from .const import DEFAULT_BAUDRATE_DATA_STREAM, DEFAULT_BAUDRATE_WAKE_UP
 import serial
 from serial import Serial
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -14,9 +16,11 @@ MAX_LINES_ULTRAHEAT_REPONSE = 26
 
 
 class UltraheatReader:
-    def __init__(self, port) -> None:
+    def __init__(self, port, baudrate_wake_up = DEFAULT_BAUDRATE_WAKE_UP, baudrate_data_stream = DEFAULT_BAUDRATE_DATA_STREAM) -> None:
         _LOGGER.debug("Initializing UltraheatReader on port: %s", port)
         self._port = port
+        self.baudrate_wake_up = baudrate_wake_up
+        self.baudrate_data_stream = baudrate_data_stream
 
     def read(self):
         """Reads the device on the specified port, returning the full string"""
@@ -27,7 +31,7 @@ class UltraheatReader:
         """Make the connection to the serial device"""
         return Serial(
             self._port,
-            baudrate=300,
+            baudrate=self.baudrate_wake_up,
             bytesize=serial.SEVENBITS,
             parity=serial.PARITY_EVEN,
             stopbits=serial.STOPBITS_TWO,
@@ -46,6 +50,7 @@ class UltraheatReader:
         )
 
         # checking if we can read the model (eg. 'LUGCUH50')
+        _LOGGER.debug("Reading model at baudrate %s", self.baudrate_wake_up)
         data = conn.readline()
         _LOGGER.debug("Got: %s", data)
         model = data.decode("utf-8")[1:9]
@@ -59,9 +64,9 @@ class UltraheatReader:
 
     def _get_data(self, conn) -> tuple[str, str]:
         model = self._wake_up(conn)
-        _LOGGER.debug("Receiving data")
+        _LOGGER.debug("Reading data at baudrate %s", self.baudrate_data_stream)
         # Now switch to 2400 BAUD. This could be different for other models. Let me know if you experience problems.
-        conn.baudrate = 2400
+        conn.baudrate = self.baudrate_data_stream
         ir_lines = ""
         ir_line = ""
         iteration = 0
