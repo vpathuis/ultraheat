@@ -70,13 +70,7 @@ elif args.port:
         "WARNING: everytime the unit is read, battery time will go down by about 30 minutes!"
     )
     print("Reading ... this will take some time...")
-    baudrate_wake_up = None
-    baudrate_data_stream = None
-    if args.brw:
-        baudrate_wake_up = args.brw
-    if args.brd:
-        baudrate_data_stream = args.brd
-    reader = UltraheatReader(args.port, baudrate_wake_up, baudrate_data_stream)
+    reader = UltraheatReader(args.port)
 else:
     parser.print_help()
     exit()
