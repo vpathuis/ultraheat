@@ -8,6 +8,13 @@ from ultraheat_api import HeatMeterService, UltraheatReader
 WAKE_UP_BAUDRATES = [50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400, 4800, 9600, 19200, 38400, 57600, 115200]
 DATA_STREAM_BAUDRATES = [2400, 9600, 38400 or 115200]
 
+def try_baudrates(wake_up_baudrate, data_stream_baudrate):
+    _LOGGER.debug("***********TRYING WAKE UP: %s and DATA STREAM: %s ***********", wake_up_baudrate, data_stream_baudrate)
+    reader = UltraheatReader(args.port, wake_up_baudrate, data_stream_baudrate)
+    heat_meter_service = HeatMeterService(reader)
+    response_data = heat_meter_service.read()
+    pprint(response_data)
+
 logging.basicConfig(level="DEBUG")
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,9 +31,8 @@ if not args.port:
     exit()
 
 for wake_up_baudrate in WAKE_UP_BAUDRATES:
-    for data_stream_baudrate in DATA_STREAM_BAUDRATES:
-        _LOGGER.debug("***********TRYING WAKE UP: %s and DATA STREAM: %s ***********", wake_up_baudrate, data_stream_baudrate)
-        reader = UltraheatReader(args.port, wake_up_baudrate, data_stream_baudrate)
-        heat_meter_service = HeatMeterService(reader)
-        response_data = heat_meter_service.read()
-        pprint(response_data)
+    try_baudrates(wake_up_baudrate, 2400)
+
+for data_stream_baudrate in DATA_STREAM_BAUDRATES:
+    try_baudrates(300, data_stream_baudrate)
+
