@@ -30,9 +30,9 @@ if not args.port:
     parser.print_help()
     exit()
 
-for wake_up_baudrate in WAKE_UP_BAUDRATES:
-    try_baudrates(wake_up_baudrate, 2400)
-
 for data_stream_baudrate in DATA_STREAM_BAUDRATES:
     try_baudrates(300, data_stream_baudrate)
+
+for wake_up_baudrate in WAKE_UP_BAUDRATES:
+    try_baudrates(wake_up_baudrate, 2400)
 
