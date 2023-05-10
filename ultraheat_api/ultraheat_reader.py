@@ -52,8 +52,10 @@ class UltraheatReader:
 
         # checking if we can read the model (eg. 'LUGCUH50')
         _LOGGER.debug("Reading model at baudrate %s", self.baudrate_wake_up)
+        start_time = time.time()
         data = conn.readline()
-        _LOGGER.debug("Got: %s", data)
+        elapsed_time = time.time() - start_time
+        _LOGGER.debug("Got: %s. This took %s seconds", data, elapsed_time)
         model = data.decode("utf-8")[1:9]
         if model:
             _LOGGER.debug("Got model %s", model)
