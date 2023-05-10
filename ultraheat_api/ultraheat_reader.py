@@ -35,7 +35,7 @@ class UltraheatReader:
             bytesize=serial.SEVENBITS,
             parity=serial.PARITY_EVEN,
             stopbits=serial.STOPBITS_TWO,
-            timeout=5,
+            timeout=30,
             xonxoff=0,
             rtscts=0,
         )
