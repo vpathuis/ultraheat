@@ -8,6 +8,7 @@ from typing import Tuple
 from .const import DEFAULT_BAUDRATE_DATA_STREAM, DEFAULT_BAUDRATE_WAKE_UP
 import serial
 from serial import Serial
+import time
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -73,12 +74,14 @@ class UltraheatReader:
         # reading all lines (typically 25 lines)
         while "!" not in ir_line and iteration < MAX_LINES_ULTRAHEAT_REPONSE:
             iteration += 1
+            start_time = time.time()
             data = conn.readline()
+            elapsed_time = time.time() - start_time
             if len(data) == 0:
-                _LOGGER.debug("Timeout on serial read, stopping after %s lines of data", iteration)
+                _LOGGER.debug("No data received after %s seconds. Empty data usually implies timeout on serial read. Stopping after %s lines of data", elapsed_time, iteration)
                 break
 
-            _LOGGER.debug("Got: %s", data)
+            _LOGGER.debug("Reading line # %s. Got: %s. This took %s seconds", iteration, data, elapsed_time)
             ir_line = data.decode("utf-8")
             _LOGGER.debug("After decoding: `%s`", ir_line)
             ir_lines += ir_line

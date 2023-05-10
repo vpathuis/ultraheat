@@ -13,7 +13,7 @@ dummy_file_path_error = os.path.join(path, DUMMY_FILE_ERROR)
 
 # Create a list from the dummy file to use as mock for reading the port
 with open(dummy_file_path, "rb") as f:
-    mock_readline = f.read().splitlines()
+    mock_readline = f.read().splitlines(keepends=True)
 
 
 class HeatMeterTest(unittest.TestCase):
