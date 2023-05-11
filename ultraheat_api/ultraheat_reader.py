@@ -67,7 +67,7 @@ class UltraheatReader:
 
     def _get_data(self, conn) -> tuple[str, str]:
         model = self._wake_up(conn)
-        _LOGGER.debug("Reading data at baudrate %s", self.baudrate_data_stream)
+        _LOGGER.debug("Reading data at baudrate %s. %s bytes in buffer", self.baudrate_data_stream, conn.in_waiting)
         # Now switch to 2400 BAUD. This could be different for other models. Let me know if you experience problems.
         conn.baudrate = self.baudrate_data_stream
         ir_lines = ""
@@ -83,7 +83,7 @@ class UltraheatReader:
                 _LOGGER.debug("No data received after %s seconds. Empty data usually implies timeout on serial read. Stopping after %s lines of data", elapsed_time, iteration)
                 break
 
-            _LOGGER.debug("Reading line # %s. Got: %s. This took %s seconds", iteration, data, elapsed_time)
+            _LOGGER.debug("Reading line # %s. Got: %s. This took %s seconds. %s bytes left in buffer.", iteration, data, elapsed_time, conn.in_waiting)
             ir_line = data.decode("utf-8")
             _LOGGER.debug("After decoding: `%s`", ir_line)
             ir_lines += ir_line
