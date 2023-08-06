@@ -11,11 +11,13 @@ import re
 RESPONSE_CONFIG = {
     "heat_usage_gj": {"regex": r"6.8\((.*?)\*GJ\)", "unit": "GJ", "type": float},
     "heat_usage_mwh": {"regex": r"6.8\((.*?)\*MWh\)", "unit": "MWh", "type": float},
+    "heat_usage_kwh": {"regex": r"6.8\((.*?)\*kWh\)", "unit": "kWh", "type": float},
     "volume_usage_m3": {"regex": r"6.26\((.*?)\*m3\)", "unit": "m3", "type": float},
     "ownership_number": {"regex": r"9.21\((.*?)\)", "type": str},
     "volume_previous_year_m3": {"regex": r"6.26\*01\((.*?)\*m3\)", "unit": "m3", "type": float},
     "heat_previous_year_gj": {"regex": r"6.8\*01\((.*?)\*GJ\)", "unit": "GJ", "type": float},
     "heat_previous_year_mwh": {"regex": r"6.8\*01\((.*?)\*MWh\)", "unit": "MWh", "type": float},
+    "heat_previous_year_kwh": {"regex": r"6.8\*01\((.*?)\*kWh\)", "unit": "kWh", "type": float},
     "error_number": {"regex": r"F\((.*?)\)", "type": str},
     "device_number": {"regex": r"9.20\((.*?)\)", "type": str},
     "measurement_period_minutes": {"regex": r"6.35\((.*?)\*m\)", "type": int},
@@ -92,12 +94,20 @@ class HeatMeterResponseParser:
 
     def parse(self, model, raw_response) -> HeatMeterResponse:
         heat_usage_gj = self._match("heat_usage_gj", raw_response)
-        heat_usage_mwh = self._match("heat_usage_mwh", raw_response)
+        heat_usage_mwh = 0
+        if self._match("heat_usage_mwh", raw_response):
+            heat_usage_mwh = self._match("heat_usage_mwh", raw_response)
+        if self._match("heat_usage_kwh", raw_response):
+            heat_usage_mwh = self._match("heat_usage_kwh", raw_response) * 1000
         volume_usage_m3 = self._match("volume_usage_m3", raw_response)
         ownership_number = self._match("ownership_number", raw_response)
         volume_previous_year_m3 = self._match("volume_previous_year_m3", raw_response)
         heat_previous_year_gj = self._match("heat_previous_year_gj", raw_response)
-        heat_previous_year_mwh = self._match("heat_previous_year_mwh", raw_response)
+        heat_previous_year_mwh = 0
+        if self._match("heat_previous_year_mwh", raw_response):
+            heat_previous_year_mwh = self._match("heat_previous_year_mwh", raw_response)
+        if self._match("heat_previous_year_kwh", raw_response):
+            heat_previous_year_mwh = self._match("heat_previous_year_kwh", raw_response) * 1000
         error_number = self._match("error_number", raw_response)
         device_number = self._match("device_number", raw_response)
         measurement_period_minutes = self._match("measurement_period_minutes", raw_response)
