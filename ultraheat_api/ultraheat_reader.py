@@ -5,7 +5,7 @@ To test the connection use validate, which will return the model name.
 import logging
 from typing import Tuple
 
-from .const import DEFAULT_BAUDRATE_DATA_STREAM, DEFAULT_BAUDRATE_WAKE_UP
+from .const import DEFAULT_BAUDRATE_DATA_STREAM, DEFAULT_BAUDRATE_WAKE_UP, DEFAULT_TIMEOUT
 import serial
 from serial import Serial
 import time
@@ -17,11 +17,18 @@ MAX_LINES_ULTRAHEAT_RESPONSE = 26
 
 
 class UltraheatReader:
-    def __init__(self, port, baudrate_wake_up = DEFAULT_BAUDRATE_WAKE_UP, baudrate_data_stream = DEFAULT_BAUDRATE_DATA_STREAM) -> None:
+    def __init__(
+            self,
+            port,
+            baudrate_wake_up = DEFAULT_BAUDRATE_WAKE_UP,
+            baudrate_data_stream = DEFAULT_BAUDRATE_DATA_STREAM,
+            timeout = DEFAULT_TIMEOUT
+        ) -> None:
         _LOGGER.debug("Initializing UltraheatReader on port: %s", port)
         self._port = port
         self.baudrate_wake_up = baudrate_wake_up
         self.baudrate_data_stream = baudrate_data_stream
+        self.timeout = timeout
 
     def read(self):
         """Reads the device on the specified port, returning the full string"""
@@ -36,7 +43,7 @@ class UltraheatReader:
             bytesize=serial.SEVENBITS,
             parity=serial.PARITY_EVEN,
             stopbits=serial.STOPBITS_TWO,
-            timeout=60,
+            timeout=self.timeout,
             xonxoff=0,
             rtscts=0,
         )
