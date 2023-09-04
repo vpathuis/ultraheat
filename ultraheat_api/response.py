@@ -2,8 +2,7 @@
 Formats the raw reponse data into a HeatMeterResponse object
 For different models, the raw data could be different. In these cases the RESPONSE_CONFIG might have to be modified.
 """
-
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 import datetime
 import re
 
@@ -56,7 +55,6 @@ RESPONSE_CONFIG = {
 }
 
 
-
 @dataclass
 class HeatMeterResponse:
     model: str
@@ -89,6 +87,11 @@ class HeatMeterResponse:
     flow_hours: int
     raw_response: str
 
+    def __str__(self):
+        """Returns a string containing only the non-default field values."""
+        return ', '.join(f'{field.name}={getattr(self, field.name)!r}'
+                      for field in fields(self)
+                      if getattr(self, field.name) != field.default)
 
 class HeatMeterResponseParser:
 
@@ -98,7 +101,7 @@ class HeatMeterResponseParser:
         if self._match("heat_usage_mwh", raw_response):
             heat_usage_mwh = self._match("heat_usage_mwh", raw_response)
         if self._match("heat_usage_kwh", raw_response):
-            heat_usage_mwh = self._match("heat_usage_kwh", raw_response) * 1000
+            heat_usage_mwh = kwh_to_mwh(self._match("heat_usage_kwh", raw_response))
         volume_usage_m3 = self._match("volume_usage_m3", raw_response)
         ownership_number = self._match("ownership_number", raw_response)
         volume_previous_year_m3 = self._match("volume_previous_year_m3", raw_response)
@@ -107,7 +110,7 @@ class HeatMeterResponseParser:
         if self._match("heat_previous_year_mwh", raw_response):
             heat_previous_year_mwh = self._match("heat_previous_year_mwh", raw_response)
         if self._match("heat_previous_year_kwh", raw_response):
-            heat_previous_year_mwh = self._match("heat_previous_year_kwh", raw_response) * 1000
+            heat_previous_year_mwh = kwh_to_mwh(self._match("heat_previous_year_kwh", raw_response))
         error_number = self._match("error_number", raw_response)
         device_number = self._match("device_number", raw_response)
         measurement_period_minutes = self._match("measurement_period_minutes", raw_response)
@@ -170,3 +173,8 @@ class HeatMeterResponseParser:
                 return RESPONSE_CONFIG[name]["type"](str_match.group(1))
             except ValueError:
                 raise
+
+
+def kwh_to_mwh(kwh: float) -> float:
+    """Convert kWh to MWh"""
+    return kwh / 1000
