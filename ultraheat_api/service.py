@@ -18,5 +18,5 @@ class HeatMeterService:
     def read(self) -> HeatMeterResponse:
         (model, raw_response) = self.reader.read()
         parsed_result = HeatMeterResponseParser().parse(model, raw_response)
-        _LOGGER.debug("parsed result: ", parsed_result)
+        _LOGGER.debug("parsed result: %s", parsed_result)
         return parsed_result
