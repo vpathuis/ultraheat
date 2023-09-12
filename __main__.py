@@ -1,13 +1,16 @@
-import argparse, sys
+import argparse
+import logging
 from pprint import pprint
 import os
-import sys
+
+from ultraheat_api.const import DEFAULT_TIMEOUT
 from ultraheat_api.find_ports import find_ports
 from ultraheat_api.service import HeatMeterService
 from ultraheat_api.file_reader import FileReader
 from ultraheat_api.ultraheat_reader import UltraheatReader
 
 parser = argparse.ArgumentParser()
+
 
 def parse_arguments():
 
@@ -19,16 +22,34 @@ def parse_arguments():
         "--port",
         help="Choose port mode, supply the port name, eg. '/dev/ttyUSB0' or 'COM5'",
     )
+
     parser.add_argument(
-        "--validate",
-        help="Choose validate mode. Combine with --file or --port",
-        action="store_true",
+        "--log",
+        help="Choose log level DEBUG, INFO, WARNING or ERROR",
+    )
+
+    parser.add_argument(
+        "--brw",
+        help="Set the baudrate for waking up the default. Defaults to 300",
+    )
+
+    parser.add_argument(
+        "--brd",
+        help="Set the baudrate for reading the datastream. Defaults to 2400",
+    )
+
+    parser.add_argument(
+        "--timeout",
+        help="Set the timeout for reading the datastream. Defaults to 60",
     )
 
     return parser.parse_args()
 
 
 args = parse_arguments()
+if args.log:
+    logging.basicConfig(level=args.log)
+
 if args.ports:
     print("showing available ports: ")
     ports = find_ports()
@@ -47,20 +68,20 @@ if args.file:
     reader = FileReader(file_name)
 
 elif args.port:
+    timeout = DEFAULT_TIMEOUT
+    if args.timeout:
+        timeout = args.timeout
+
     print(
         "WARNING: everytime the unit is read, battery time will go down by about 30 minutes!"
     )
     print("Reading ... this will take some time...")
-    reader = UltraheatReader(args.port)
+    reader = UltraheatReader(port = args.port, timeout=timeout)
 else:
     parser.print_help()
     exit()
 
 heat_meter_service = HeatMeterService(reader)
 
-if args.validate:
-    model = heat_meter_service.validate()
-    print("model: " + model)
-else:
-    response_data = heat_meter_service.read()
-    pprint(response_data)
+response_data = heat_meter_service.read()
+pprint(response_data)

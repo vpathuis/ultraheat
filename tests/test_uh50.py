@@ -13,8 +13,7 @@ dummy_file_path_error = os.path.join(path, DUMMY_FILE_ERROR)
 
 # Create a list from the dummy file to use as mock for reading the port
 with open(dummy_file_path, "rb") as f:
-    mock_readline = f.read().splitlines()
-
+    mock_readline = f.read().splitlines(keepends=True)
 
 class HeatMeterTest(unittest.TestCase):
 
@@ -73,6 +72,18 @@ class HeatMeterTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             _ = heat_meter_service.read()
 
+    @patch('ultraheat_api.ultraheat_reader.Serial')
+    def test_read_port_timeout(self, mock_Serial):
+        """Empty data after first 3 lines, implying timeout on the readline."""
+        mock_readline_timeout = mock_readline[:3]
+        mock_readline_timeout.append(b"")
+        mock_Serial().__enter__().readline.side_effect = mock_readline_timeout
+        reader = UltraheatReader(DUMMY_PORT)
+
+        heat_meter_service = HeatMeterService(reader)
+        response_data = heat_meter_service.read()
+        self.assertEqual(328.871, response_data.heat_usage_gj)
+        self.assertEqual(None, response_data.operating_hours)
 
 if __name__ == '__main__':
     unittest.main()

@@ -13,7 +13,7 @@ dummy_file_path_error = os.path.join(path, DUMMY_FILE_ERROR)
 
 # Create a list from the dummy file to use as mock for reading the port
 with open(dummy_file_path, "rb") as f:
-    mock_readline = f.read().splitlines()
+    mock_readline = f.read().splitlines(keepends=True)
 
 
 class HeatMeterTest(unittest.TestCase):
@@ -21,7 +21,7 @@ class HeatMeterTest(unittest.TestCase):
     def assert_response_data(self, response_data):
         # check the response dummy data 
         self.assertEqual('LUGCUH50', response_data.model)
-        self.assertEqual(326.062, response_data.heat_usage_mwh)   
+        self.assertEqual(326.062, response_data.heat_usage_mwh)
         self.assertEqual(7939.56, response_data.volume_usage_m3)
         self.assertEqual('00073600', response_data.ownership_number)
         self.assertEqual(7843.48, response_data.volume_previous_year_m3)
