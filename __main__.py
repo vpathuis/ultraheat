@@ -8,6 +8,7 @@ from ultraheat_api.find_ports import find_ports
 from ultraheat_api.service import HeatMeterService
 from ultraheat_api.file_reader import FileReader
 from ultraheat_api.ultraheat_reader import UltraheatReader
+from ultraheat_api.t330_reader import T330Reader
 
 parser = argparse.ArgumentParser()
 
@@ -43,6 +44,13 @@ def parse_arguments():
         help="Set the timeout for reading the datastream. Defaults to 60",
     )
 
+    parser.add_argument(
+        "--protocol",
+        help="Protocol/model to use: uh50 (default) or t330",
+        choices=["uh50", "t330"],
+        default="uh50",
+    )
+
     return parser.parse_args()
 
 
@@ -65,7 +73,7 @@ if args.file:
         file_name = os.path.join(path, "tests", "LUGCUH50_dummy_utf8.txt")
     else:
         file_name = args.file
-    reader = FileReader(file_name)
+    reader = FileReader(file_name, protocol=args.protocol)
 
 elif args.port:
     timeout = DEFAULT_TIMEOUT
@@ -76,7 +84,10 @@ elif args.port:
         "WARNING: everytime the unit is read, battery time will go down by about 30 minutes!"
     )
     print("Reading ... this will take some time...")
-    reader = UltraheatReader(port = args.port, timeout=timeout)
+    if args.protocol == "t330":
+        reader = T330Reader(port=args.port, timeout=float(timeout))
+    else:
+        reader = UltraheatReader(port = args.port, timeout=timeout)
 else:
     parser.print_help()
     exit()

@@ -5,6 +5,23 @@ Note: An (USB) IR reader is needed and connected to the machine running the pyth
 WARNING: everytime this is called, battery time of the Ultraheat will go down by about 30 minutes!
 This package has been tested with the Landys & Gyr Ultraheat type UH50 and T550. Other models are likely to work as well (please contact me if you want to help/test with adding support for other models).
 
+## T330 support (experimental)
+T330 meters use optical M‑Bus with binary frames. A new reader `T330Reader` follows a proven perl flow (2400→9600 baud, 8E1) to collect frames and decodes a minimal subset (energy, volume, power, flow, temperatures, fabrication number, date/time).
+
+Usage:
+```python
+from ultraheat_api import HeatMeterService, T330Reader
+
+service = HeatMeterService(T330Reader(port="/dev/ttyUSB0"))
+response = service.read()
+print(response.heat_usage_mwh, response.volume_usage_m3)
+```
+
+Assumptions:
+- Timing/retries are conservative; if your meter responds slowly, increase the reader `timeout`.
+- Only a subset of fields is decoded for now; contributions are welcome to extend.
+- UH50/T550 behavior is unchanged.
+
 ## Using the python integration as API
 ```python
 import ultraheat_api as hm
