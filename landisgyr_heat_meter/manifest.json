@@ -7,5 +7,5 @@
   "documentation": "https://www.home-assistant.io/integrations/landisgyr_heat_meter",
   "iot_class": "local_polling",
   "requirements": ["git+https://github.com/vpathuis/ultraheat.git@t330"],
-  "version": 1.0
+  "version": "1.0"
 }
