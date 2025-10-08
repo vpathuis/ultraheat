@@ -31,7 +31,7 @@ from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
 
-from .const import DOMAIN
+from .const import DOMAIN, MODEL_T330
 from .coordinator import UltraheatConfigEntry, UltraheatCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -53,6 +53,15 @@ HEAT_METER_SENSOR_TYPES = (
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL,
         value_fn=lambda res: res.heat_usage_mwh,
+    ),
+    HeatMeterSensorEntityDescription(
+        key="energy_consumption_kwh",
+        icon="mdi:fire",
+        name="Energy consumption",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        value_fn=lambda res: getattr(res, 'energy_consumption_kwh', None),
     ),
     HeatMeterSensorEntityDescription(
         key="volume_usage_m3",
@@ -135,6 +144,53 @@ HEAT_METER_SENSOR_TYPES = (
         device_class=SensorDeviceClass.POWER,
         entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda res: res.power_max_kw,
+    ),
+    HeatMeterSensorEntityDescription(
+        key="power_w",
+        name="Power",
+        native_unit_of_measurement=UnitOfPower.WATT,
+        device_class=SensorDeviceClass.POWER,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda res: getattr(res, 'power_w', None),
+    ),
+    HeatMeterSensorEntityDescription(
+        key="volume_flow_m3_h",
+        name="Volume flow",
+        native_unit_of_measurement=UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR,
+        icon="mdi:water-outline",
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda res: getattr(res, 'volume_flow_m3_h', None),
+    ),
+    HeatMeterSensorEntityDescription(
+        key="flow_temperature_c",
+        name="Flow temperature",
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda res: getattr(res, 'flow_temperature_c', None),
+    ),
+    HeatMeterSensorEntityDescription(
+        key="return_temperature_c",
+        name="Return temperature",
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda res: getattr(res, 'return_temperature_c', None),
+    ),
+    HeatMeterSensorEntityDescription(
+        key="temperature_difference_k",
+        name="Temperature difference",
+        native_unit_of_measurement=UnitOfTemperature.KELVIN,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda res: getattr(res, 'temperature_difference_k', None),
+    ),
+    HeatMeterSensorEntityDescription(
+        key="fabrication_number",
+        name="Fabrication number",
+        icon="mdi:identifier",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda res: getattr(res, 'fabrication_number', None),
     ),
     HeatMeterSensorEntityDescription(
         key="power_max_previous_year_kw",
@@ -283,9 +339,42 @@ async def async_setup_entry(
         name="Landis+Gyr Heat Meter",
     )
 
+    # Filter entities based on model
+    if model == MODEL_T330:
+        # T330 specific entities only
+        t330_entity_keys = {
+            "energy_consumption_kwh",
+            "volume_usage_m3",
+            "power_w",
+            "volume_flow_m3_h",
+            "flow_temperature_c",
+            "return_temperature_c", 
+            "temperature_difference_k",
+            "fabrication_number"
+        }
+        filtered_descriptions = [
+            desc for desc in HEAT_METER_SENSOR_TYPES 
+            if desc.key in t330_entity_keys
+        ]
+    else:
+        # UH50/T550 entities (exclude T330 specific ones)
+        t330_only_keys = {
+            "energy_consumption_kwh",
+            "power_w", 
+            "volume_flow_m3_h",
+            "flow_temperature_c",
+            "return_temperature_c",
+            "temperature_difference_k",
+            "fabrication_number"
+        }
+        filtered_descriptions = [
+            desc for desc in HEAT_METER_SENSOR_TYPES 
+            if desc.key not in t330_only_keys
+        ]
+
     async_add_entities(
         HeatMeterSensor(coordinator, description, device)
-        for description in HEAT_METER_SENSOR_TYPES
+        for description in filtered_descriptions
     )
 
 

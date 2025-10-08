@@ -6,16 +6,42 @@ WARNING: everytime this is called, battery time of the Ultraheat will go down by
 This package has been tested with the Landys & Gyr Ultraheat type UH50 and T550. Other models are likely to work as well (please contact me if you want to help/test with adding support for other models).
 
 ## T330 support (experimental)
-T330 meters use optical M‑Bus with binary frames. A new reader `T330Reader` follows a proven perl flow (2400→9600 baud, 8E1) to collect frames and decodes a minimal subset (energy, volume, power, flow, temperatures, fabrication number, date/time).
+T330 meters use optical M‑Bus with binary frames. A new reader `T330Reader` follows a proven communication protocol and M-Bus parsing logic (2400→9600 baud, 8E1) to collect frames and decodes a minimal subset (energy, volume, power, flow, temperatures, fabrication number, date/time).
+
+The T330 implementation is based on the excellent work by forum users **gauner1986** and **rainerlan** from photovoltaikforum.com, who provided the communication protocol and M-Bus conversion logic for this model.
+
+See: https://www.photovoltaikforum.com/thread/188234-landis-gyr-ultraheat-t230-w%C3%A4rmez%C3%A4hler-mit-trct5000-und-esphome-wemos-d1-mini-aus/?postID=4221968#post4221968
 
 Usage:
 ```python
 from ultraheat_api import HeatMeterService, T330Reader
 
-service = HeatMeterService(T330Reader(port="/dev/ttyUSB0"))
+service = HeatMeterService(T330Reader(port="/dev/ttyUSB0", timeout=2))
 response = service.read()
 print(response.heat_usage_mwh, response.volume_usage_m3)
 ```
+
+### Debug Mode
+The T330 parser includes debug logging capabilities that create timestamped log files in the `tests/` directory when enabled. Debug mode logs detailed M-Bus frame parsing information and final extraction results.
+
+```python
+import logging
+from ultraheat_api import HeatMeterService, T330Reader
+
+# Enable debug logging
+logging.getLogger('ultraheat_api.mbus_t330').setLevel(logging.DEBUG)
+
+service = HeatMeterService(T330Reader(port="/dev/ttyUSB0", timeout=2))
+response = service.read()
+
+# Debug log will be created as: tests/LGUT330_log_YYYYMMDD_HHMM.txt
+```
+
+The debug log contains:
+- M-Bus frame validation and parsing details
+- DIF/VIF decoding information  
+- Storage number filtering (only Storage#: 0 processed)
+- Final measurement extraction results
 
 Assumptions:
 - Timing/retries are conservative; if your meter responds slowly, increase the reader `timeout`.
@@ -49,7 +75,9 @@ print('m3 :',heat_meter.volume_usage_m3)
 etc..
 
 ```
-## Full list of available data
+## Available data fields
+
+### UH50/T550 models
 - heat_usage_gj (empty for T550)
 - heat_usage_mwh (empty for UH50)
 - volume_usage_m3
@@ -78,6 +106,20 @@ etc..
 - settings_and_firmware
 - flow_hours
 - raw_response
+
+### T330 model (M-Bus)
+The T330 model provides a focused set of current measurements via M-Bus protocol:
+
+- **energy_consumption_kwh**: Total energy consumption in kWh
+- **volume_usage_m3**: Total volume consumption in m³
+- **power_w**: Current power consumption in Watts
+- **volume_flow_m3_h**: Current volume flow rate in m³/h
+- **flow_temperature_c**: Current flow temperature in °C
+- **return_temperature_c**: Current return temperature in °C  
+- **temperature_difference_k**: Temperature difference in Kelvin
+- **fabrication_number**: Device fabrication/serial number
+
+The T330 parser only processes current readings (Storage#: 0) and ignores historical data from other storage numbers to focus on real-time measurements.
 
 ## Telegram parsing
 The telegram that is read from the Heat Meter is parsed as follows. 

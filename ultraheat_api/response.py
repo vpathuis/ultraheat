@@ -86,6 +86,14 @@ class HeatMeterResponse:
     settings_and_firmware: str
     flow_hours: int
     raw_response: str
+    # T330 specific fields
+    energy_consumption_kwh: float = 0.0
+    power_w: float = 0.0
+    volume_flow_m3_h: float = 0.0
+    flow_temperature_c: float = 0.0
+    return_temperature_c: float = 0.0
+    temperature_difference_k: float = 0.0
+    fabrication_number: str = ""
 
     def __str__(self):
         """Returns a string containing only the non-default field values."""
