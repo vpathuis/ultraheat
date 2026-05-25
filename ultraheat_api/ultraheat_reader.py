@@ -1,13 +1,16 @@
-""" 
-Reads raw response data from the Ultraheat unit. 
+"""
+Reads raw response data from the Ultraheat unit.
 To test the connection use validate, which will return the model name.
 """
-import logging
-from typing import Tuple
 
-from .const import DEFAULT_BAUDRATE_DATA_STREAM, DEFAULT_BAUDRATE_WAKE_UP, DEFAULT_TIMEOUT
-import serial
-from serial import Serial
+import logging
+
+from .const import (
+    DEFAULT_BAUDRATE_DATA_STREAM,
+    DEFAULT_BAUDRATE_WAKE_UP,
+    DEFAULT_TIMEOUT,
+)
+import serialx
 import time
 
 
@@ -18,12 +21,12 @@ MAX_LINES_ULTRAHEAT_RESPONSE = 26
 
 class UltraheatReader:
     def __init__(
-            self,
-            port,
-            baudrate_wake_up = DEFAULT_BAUDRATE_WAKE_UP,
-            baudrate_data_stream = DEFAULT_BAUDRATE_DATA_STREAM,
-            timeout = DEFAULT_TIMEOUT
-        ) -> None:
+        self,
+        port,
+        baudrate_wake_up=DEFAULT_BAUDRATE_WAKE_UP,
+        baudrate_data_stream=DEFAULT_BAUDRATE_DATA_STREAM,
+        timeout=DEFAULT_TIMEOUT,
+    ) -> None:
         _LOGGER.debug("Initializing UltraheatReader on port: %s", port)
         self._port = port
         self.baudrate_wake_up = baudrate_wake_up
@@ -35,15 +38,15 @@ class UltraheatReader:
         with self._connect_serial() as conn:
             return self._get_data(conn)
 
-    def _connect_serial(self) -> Serial:
+    def _connect_serial(self):
         """Make the connection to the serial device"""
-        return Serial(
+        return serialx.serial_for_url(
             self._port,
             baudrate=self.baudrate_wake_up,
-            bytesize=serial.SEVENBITS,
-            parity=serial.PARITY_EVEN,
-            stopbits=serial.STOPBITS_TWO,
-            timeout=self.timeout,
+            byte_size=7,
+            parity=serialx.Parity.EVEN,
+            stopbits=serialx.StopBits.TWO,
+            read_timeout=self.timeout,
             xonxoff=0,
             rtscts=0,
         )
@@ -54,7 +57,7 @@ class UltraheatReader:
         _LOGGER.debug("Waking up Ultraheat")
         conn.write(
             b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x2F\x3F\x21\x0D\x0A"
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x2f\x3f\x21\x0d\x0a"
         )
 
         # checking if we can read the model (eg. 'LUGCUH50')
@@ -74,7 +77,11 @@ class UltraheatReader:
 
     def _get_data(self, conn) -> tuple[str, str]:
         model = self._wake_up(conn)
-        _LOGGER.debug("Reading data at baudrate %s. %s bytes in buffer", self.baudrate_data_stream, conn.in_waiting)
+        _LOGGER.debug(
+            "Reading data at baudrate %s. %s bytes in buffer",
+            self.baudrate_data_stream,
+            conn.num_unread_bytes(),
+        )
         # Now switch to 2400 BAUD. This could be different for other models. Let me know if you experience problems.
         conn.baudrate = self.baudrate_data_stream
         ir_lines = ""
@@ -88,10 +95,20 @@ class UltraheatReader:
             elapsed_time = time.time() - start_time
 
             if len(data) == 0:
-                _LOGGER.debug("No data received after %s seconds. Empty data usually implies timeout on serial read. Stopping after %s lines of data", elapsed_time, iteration)
+                _LOGGER.debug(
+                    "No data received after %s seconds. Empty data usually implies timeout on serial read. Stopping after %s lines of data",
+                    elapsed_time,
+                    iteration,
+                )
                 break
 
-            _LOGGER.debug("Reading line # %s. Got: %s. This took %s seconds. %s bytes left in buffer.", iteration, data, elapsed_time, conn.in_waiting)
+            _LOGGER.debug(
+                "Reading line # %s. Got: %s. This took %s seconds. %s bytes left in buffer.",
+                iteration,
+                data,
+                elapsed_time,
+                conn.num_unread_bytes(),
+            )
             ir_line = data.decode("utf-8")
             _LOGGER.debug("After decoding: `%s`", ir_line)
             ir_lines += ir_line

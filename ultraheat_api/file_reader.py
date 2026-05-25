@@ -1,11 +1,12 @@
-""" 
-Reads raw response data from a file. 
+"""
+Reads raw response data from a file.
 This is for (integration) testing purposes, so you won't need to drain the battery while doing initial integration testing.
 """
+
 import logging
-from typing import Tuple
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class FileReader:
     def __init__(self, file_name) -> None:

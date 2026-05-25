@@ -1,6 +1,7 @@
 /__pycache__
 /tests/__pycache__
 /venv
+/.venv
 /dist
 .coverage
 tests/example_report.txt

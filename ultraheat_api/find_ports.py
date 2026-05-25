@@ -1,5 +1,6 @@
-import serial.tools.list_ports
+import serialx.tools.list_ports
+
 
 def find_ports():
     """Returns the available ports"""
-    return serial.tools.list_ports.comports()
+    return serialx.tools.list_ports.comports()

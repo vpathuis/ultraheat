@@ -1,11 +1,13 @@
 """
 Reads raw Heat Meter data and returns a HeatMeterResponse object
 """
+
 import logging
 
 from ultraheat_api.response import HeatMeterResponse, HeatMeterResponseParser
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class HeatMeterService:
     """

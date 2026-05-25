@@ -2,6 +2,7 @@
 Formats the raw reponse data into a HeatMeterResponse object
 For different models, the raw data could be different. In these cases the RESPONSE_CONFIG might have to be modified.
 """
+
 from dataclasses import dataclass, fields
 import datetime
 import re
@@ -13,23 +14,51 @@ RESPONSE_CONFIG = {
     "heat_usage_kwh": {"regex": r"6.8\((.*?)\*kWh\)", "unit": "kWh", "type": float},
     "volume_usage_m3": {"regex": r"6.26\((.*?)\*m3\)", "unit": "m3", "type": float},
     "ownership_number": {"regex": r"9.21\((.*?)\)", "type": str},
-    "volume_previous_year_m3": {"regex": r"6.26\*01\((.*?)\*m3\)", "unit": "m3", "type": float},
-    "heat_previous_year_gj": {"regex": r"6.8\*01\((.*?)\*GJ\)", "unit": "GJ", "type": float},
-    "heat_previous_year_mwh": {"regex": r"6.8\*01\((.*?)\*MWh\)", "unit": "MWh", "type": float},
-    "heat_previous_year_kwh": {"regex": r"6.8\*01\((.*?)\*kWh\)", "unit": "kWh", "type": float},
+    "volume_previous_year_m3": {
+        "regex": r"6.26\*01\((.*?)\*m3\)",
+        "unit": "m3",
+        "type": float,
+    },
+    "heat_previous_year_gj": {
+        "regex": r"6.8\*01\((.*?)\*GJ\)",
+        "unit": "GJ",
+        "type": float,
+    },
+    "heat_previous_year_mwh": {
+        "regex": r"6.8\*01\((.*?)\*MWh\)",
+        "unit": "MWh",
+        "type": float,
+    },
+    "heat_previous_year_kwh": {
+        "regex": r"6.8\*01\((.*?)\*kWh\)",
+        "unit": "kWh",
+        "type": float,
+    },
     "error_number": {"regex": r"F\((.*?)\)", "type": str},
     "device_number": {"regex": r"9.20\((.*?)\)", "type": str},
     "measurement_period_minutes": {"regex": r"6.35\((.*?)\*m\)", "type": int},
     "power_max_kw": {"regex": r"6.6\((.*?)\*kW\)", "unit": "kW", "type": float},
-    "power_max_previous_year_kw": {"regex": r"6.6\*01\((.*?)\*kW\)", "unit": "kW", "type": float},
-    "flowrate_max_m3ph": {"regex": r"6.33\((.*?)\*m3ph\)", "unit": "m3ph", "type": float},
+    "power_max_previous_year_kw": {
+        "regex": r"6.6\*01\((.*?)\*kW\)",
+        "unit": "kW",
+        "type": float,
+    },
+    "flowrate_max_m3ph": {
+        "regex": r"6.33\((.*?)\*m3ph\)",
+        "unit": "m3ph",
+        "type": float,
+    },
     "flowrate_max_previous_year_m3ph": {
         "regex": r"6.33\*01\((.*?)\*m3ph\)",
         "unit": "m3ph",
         "type": float,
     },
     "flow_temperature_max_c": {"regex": r"9.4\((.*?)\*C", "unit": "°C", "type": float},
-    "return_temperature_max_c": {"regex": r"9.4\(.*?\*C&(.*?)\*C", "unit": "°C", "type": float},
+    "return_temperature_max_c": {
+        "regex": r"9.4\(.*?\*C&(.*?)\*C",
+        "unit": "°C",
+        "type": float,
+    },
     "flow_temperature_max_previous_year_c": {
         "regex": r"9.4\*01\((.*?)\*C",
         "unit": "°C",
@@ -43,14 +72,27 @@ RESPONSE_CONFIG = {
     "operating_hours": {"regex": r"6.31\((.*?)\*h\)", "type": int},
     "fault_hours": {"regex": r"6.32\((.*?)\*h\)", "type": int},
     "fault_hours_previous_year": {"regex": r"6.32\*01\((.*?)\*h\)", "type": int},
-    "yearly_set_day": {"regex": r"6.36\((.*?)\)", "type": lambda a: a.replace("&", " ")},
-    "monthly_set_day": {"regex": r"6.36\*02\((.*?)\)", "type": lambda a: a.replace("&", " ")},
+    "yearly_set_day": {
+        "regex": r"6.36\((.*?)\)",
+        "type": lambda a: a.replace("&", " "),
+    },
+    "monthly_set_day": {
+        "regex": r"6.36\*02\((.*?)\)",
+        "type": lambda a: a.replace("&", " "),
+    },
     "meter_date_time": {
         "regex": r"9.36\((.*?)\)",
         "type": lambda a: datetime.datetime.strptime(a, "%Y-%m-%d&%H:%M:%S"),
     },
-    "measuring_range_m3ph": {"regex": r"9.24\((.*?)\*m3ph\)", "unit": "m3ph", "type": float},
-    "settings_and_firmware": {"regex": r"9.1\((.*?)\)", "type": lambda a: a.replace("&", " ")},
+    "measuring_range_m3ph": {
+        "regex": r"9.24\((.*?)\*m3ph\)",
+        "unit": "m3ph",
+        "type": float,
+    },
+    "settings_and_firmware": {
+        "regex": r"9.1\((.*?)\)",
+        "type": lambda a: a.replace("&", " "),
+    },
     "flow_hours": {"regex": r"9.31\((.*?)\*h\)", "type": int},
 }
 
@@ -89,12 +131,14 @@ class HeatMeterResponse:
 
     def __str__(self):
         """Returns a string containing only the non-default field values."""
-        return ', '.join(f'{field.name}={getattr(self, field.name)!r}'
-                      for field in fields(self)
-                      if getattr(self, field.name) != field.default)
+        return ", ".join(
+            f"{field.name}={getattr(self, field.name)!r}"
+            for field in fields(self)
+            if getattr(self, field.name) != field.default
+        )
+
 
 class HeatMeterResponseParser:
-
     def parse(self, model, raw_response) -> HeatMeterResponse:
         heat_usage_gj = self._match("heat_usage_gj", raw_response)
         heat_usage_mwh = 0
@@ -110,21 +154,35 @@ class HeatMeterResponseParser:
         if self._match("heat_previous_year_mwh", raw_response):
             heat_previous_year_mwh = self._match("heat_previous_year_mwh", raw_response)
         if self._match("heat_previous_year_kwh", raw_response):
-            heat_previous_year_mwh = kwh_to_mwh(self._match("heat_previous_year_kwh", raw_response))
+            heat_previous_year_mwh = kwh_to_mwh(
+                self._match("heat_previous_year_kwh", raw_response)
+            )
         error_number = self._match("error_number", raw_response)
         device_number = self._match("device_number", raw_response)
-        measurement_period_minutes = self._match("measurement_period_minutes", raw_response)
+        measurement_period_minutes = self._match(
+            "measurement_period_minutes", raw_response
+        )
         power_max_kw = self._match("power_max_kw", raw_response)
-        power_max_previous_year_kw = self._match("power_max_previous_year_kw", raw_response)
+        power_max_previous_year_kw = self._match(
+            "power_max_previous_year_kw", raw_response
+        )
         flowrate_max_m3ph = self._match("flowrate_max_m3ph", raw_response)
         flow_temperature_max_c = self._match("flow_temperature_max_c", raw_response)
-        flowrate_max_previous_year_m3ph = self._match("flowrate_max_previous_year_m3ph", raw_response)
+        flowrate_max_previous_year_m3ph = self._match(
+            "flowrate_max_previous_year_m3ph", raw_response
+        )
         return_temperature_max_c = self._match("return_temperature_max_c", raw_response)
-        flow_temperature_max_previous_year_c = self._match("flow_temperature_max_previous_year_c", raw_response)
-        return_temperature_max_previous_year_c = self._match("return_temperature_max_previous_year_c", raw_response)
+        flow_temperature_max_previous_year_c = self._match(
+            "flow_temperature_max_previous_year_c", raw_response
+        )
+        return_temperature_max_previous_year_c = self._match(
+            "return_temperature_max_previous_year_c", raw_response
+        )
         operating_hours = self._match("operating_hours", raw_response)
         fault_hours = self._match("fault_hours", raw_response)
-        fault_hours_previous_year = self._match("fault_hours_previous_year", raw_response)
+        fault_hours_previous_year = self._match(
+            "fault_hours_previous_year", raw_response
+        )
         yearly_set_day = self._match("yearly_set_day", raw_response)
         monthly_set_day = self._match("monthly_set_day", raw_response)
         meter_date_time = self._match("meter_date_time", raw_response)
@@ -161,7 +219,7 @@ class HeatMeterResponseParser:
             measuring_range_m3ph,
             settings_and_firmware,
             flow_hours,
-            raw_response
+            raw_response,
         )
 
     def _match(self, name, raw_response):

@@ -17,7 +17,7 @@ setup(
     license="MIT",
     packages=["ultraheat_api"],
     install_requires=[
-        "pyserial",
+        "serialx",
     ],
     zip_safe=False,
 )

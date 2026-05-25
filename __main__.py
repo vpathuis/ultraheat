@@ -76,7 +76,7 @@ elif args.port:
         "WARNING: everytime the unit is read, battery time will go down by about 30 minutes!"
     )
     print("Reading ... this will take some time...")
-    reader = UltraheatReader(port = args.port, timeout=timeout)
+    reader = UltraheatReader(port=args.port, timeout=timeout)
 else:
     parser.print_help()
     exit()
