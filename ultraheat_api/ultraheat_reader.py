@@ -53,21 +53,26 @@ class UltraheatReader:
 
     def _wake_up(self, conn) -> str:
         """Wake up the device and get the model number. Waking up should be done at 300 baud."""
-        # Sending /?!
         _LOGGER.debug("Waking up Ultraheat")
         conn.write(
             b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
             b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x2f\x3f\x21\x0d\x0a"
         )
 
-        # checking if we can read the model (eg. 'LUGCUH50')
         _LOGGER.debug("Reading model at baudrate %s", self.baudrate_wake_up)
-        start_time = time.time()
-        data = conn.readline()
-        elapsed_time = time.time() - start_time
-        _LOGGER.debug("Got: %s. This took %s seconds", data, elapsed_time)
-        model = data.decode("utf-8")[1:9]
-        if model:
+        data = b""
+        for _ in range(5):
+            start_time = time.time()
+            data = conn.readline()
+            elapsed_time = time.time() - start_time
+            _LOGGER.debug("Got: %s. This took %s seconds", data, elapsed_time)
+
+            if data.startswith(b'/') and len(data) > 3 and data[1:2] != b'?':
+                break
+            _LOGGER.debug("Skipping echo or non-identification line: %s", data)
+
+        model = data.decode("utf-8", errors="replace")[1:9]
+        if model and not all(c == '\x00' for c in model):
             _LOGGER.debug("Got model %s", model)
         else:
             _LOGGER.error("No model could be read")
