@@ -2,9 +2,12 @@
 /tests/__pycache__
 /venv
 /.venv
+/.pypirc
 /dist
+/build
 .coverage
 tests/example_report.txt
 .vscode/launch.json
 ultraheat_api/__pycache__/
 ultraheat_api.egg-info/
+.idea

@@ -67,12 +67,12 @@ class UltraheatReader:
             elapsed_time = time.time() - start_time
             _LOGGER.debug("Got: %s. This took %s seconds", data, elapsed_time)
 
-            if data.startswith(b'/') and len(data) > 3 and data[1:2] != b'?':
+            if data.startswith(b"/") and len(data) > 3 and data[1:2] != b"?":
                 break
             _LOGGER.debug("Skipping echo or non-identification line: %s", data)
 
         model = data.decode("utf-8", errors="replace")[1:9]
-        if model and not all(c == '\x00' for c in model):
+        if model and not all(c == "\x00" for c in model):
             _LOGGER.debug("Got model %s", model)
         else:
             _LOGGER.error("No model could be read")
