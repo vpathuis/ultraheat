@@ -85,6 +85,23 @@ class HeatMeterTest(unittest.TestCase):
         self.assertEqual(328.871, response_data.heat_usage_gj)
         self.assertEqual(None, response_data.operating_hours)
 
+    @patch("serialx.serial_for_url")
+    def test_read_port_with_echo(self, mock_serial_for_url):
+        """Half-duplex IR adapters (e.g. SmartGateways TTL via ESP32) echo back the wakeup
+        bytes before the device sends its identification. The wakeup loop must skip those."""
+        echo_lines = [
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\r\n",
+            b"/?!\r\n",
+        ]
+        mock_serial_for_url().__enter__().readline.side_effect = (
+            echo_lines + mock_readline
+        )
+        reader = UltraheatReader(DUMMY_PORT)
+
+        heat_meter_service = HeatMeterService(reader)
+        response_data = heat_meter_service.read()
+        self.assert_response_data(response_data)
+
 
 if __name__ == "__main__":
     unittest.main()
